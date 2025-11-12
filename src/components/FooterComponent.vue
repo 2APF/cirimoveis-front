@@ -18,7 +18,7 @@
           <div class="col-md-4 mb-4">
             <h5 class="text-uppercase text-danger fw-bold mb-3">Contacto</h5>
             <p><i class="fas fa-envelope me-2"></i>info@cirimoveis.ao</p>
-            <p><i class="fas fa-phone me-2"></i>+244 123 456 789</p>
+            <p><i class="fas fa-phone me-2"></i>+244 952 321 174</p>
             <p><i class="fas fa-map-marker-alt me-2"></i>Luanda, Angola</p>
             <div class="mt-3">
               <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>

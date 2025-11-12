@@ -22,6 +22,9 @@ import UsersView from '@/views/dashboard/admin/UsersView.vue'
 import AdministratorsView from '@/views/dashboard/admin/AdministratorsView.vue'
 import PropertiesFavorites from '@/views/dashboard/users/PropertiesFavorites.vue'
 import AgentsView from '@/views/others/AgentsView.vue'
+import ListAdsView from '@/views/dashboard/users/ListAdsView.vue'
+import EditPropertyView from '@/views/dashboard/users/EditPropertyView.vue'
+import EditAdmPropertyView from '@/views/dashboard/admin/EditPropertyView.vue'
 
 
 
@@ -159,12 +162,12 @@ const router = createRouter({
     {
       path: '/my-properties',
       name: 'app.user.properties',
-      component: PropertiesUserView,
+      component: ListAdsView,
       meta: {
         title: 'Dashboard - Cirimóveis',
         description: 'Visão geral do sistema administrativo da Cirimóveis',
         keywords: 'dashboard, administração, Cirimóveis',
-        // requiresAuth: true
+        requiresAuth: true
       }
     },
 
@@ -177,7 +180,21 @@ const router = createRouter({
         title: 'Dashboard - Cirimóveis',
         description: 'Visão geral do sistema administrativo da Cirimóveis',
         keywords: 'dashboard, administração, Cirimóveis',
-        // requiresAuth: true
+        requiresAuth: true
+      }
+    },
+
+
+    
+    {
+      path: '/property/edit/:id',
+      name: 'app.user.property.edit',
+      component: EditPropertyView,
+      meta: {
+        title: 'Dashboard - Cirimóveis',
+        description: 'Visão geral do sistema administrativo da Cirimóveis',
+        keywords: 'dashboard, administração, Cirimóveis',
+        requiresAuth: true
       }
     },
 
@@ -253,6 +270,20 @@ const router = createRouter({
         title: 'Criar Propriedade - Cirimóveis',
         description: 'Crie uma nova propriedade na plataforma Cirimóveis.',
         keywords: 'criar propriedade, gerenciamento, Cirimóveis',
+        requiresAuthDash: true
+      }
+    },
+
+
+
+    {
+      path: '/dash/property/edit/:id',
+      name: 'app.dash.property.edit',
+      component: EditAdmPropertyView,
+      meta: {
+        title: 'Editar Propriedade - Cirimóveis',
+        description: 'Edite uma propriedade existente na plataforma Cirimóveis.',
+        keywords: 'editar propriedade, gerenciamento, Cirimóveis',
         requiresAuthDash: true
       }
     },
@@ -363,7 +394,12 @@ const router = createRouter({
   }
 })
 
+
+
+
+
 router.beforeEach(async (to, from, next) => {
+
   const user = Cookies.get('user') || null
   const token = Cookies.get('token') || null
 
@@ -394,8 +430,7 @@ router.beforeEach(async (to, from, next) => {
       } else {
         return next()
       }
-    } catch (error) {
-      // console.error('Error fetching user data:', error);
+    } catch (error) { 
       return next()
     }
   }

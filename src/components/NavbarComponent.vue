@@ -5,13 +5,8 @@
         <img :src="logoSrc" :alt="logoAlt" :style="logoStyle" />
       </RouterLink>
 
-      <button
-        class="navbar-toggler border-0"
-        type="button"
-        @click="toggleNavbar"
-        :aria-expanded="navbarOpen"
-        aria-label="Alternar navegação"
-      >
+      <button class="navbar-toggler border-0" type="button" @click="toggleNavbar" :aria-expanded="navbarOpen"
+        aria-label="Alternar navegação">
         <span class="navbar-toggler-icon" :aria-hidden="true"></span>
       </button>
 
@@ -19,47 +14,30 @@
 
         <ul class="navbar-nav mx-auto" role="menubar">
           <li class="nav-item" role="none">
-            <RouterLink 
-              class="nav-link" 
-              :to="{ name: 'app.home' }" 
-              :class="{ active: activeItem === 'home' }"
-              :aria-current="isActive('app.home') ? 'page' : undefined"
-              @click="closeNavbar"
-            >
-              <i class="fas fa-home " style="margin-right: 8px;" aria-hidden="true"></i> 
+            <RouterLink class="nav-link" :to="{ name: 'app.home' }" :class="{ active: activeItem === 'home' }"
+              :aria-current="isActive('app.home') ? 'page' : undefined" @click="closeNavbar">
+              <i class="fas fa-home " style="margin-right: 8px;" aria-hidden="true"></i>
               Home
             </RouterLink>
           </li>
           <li class="nav-item" role="none">
-            <RouterLink 
-              class="nav-link" 
-              :to="{ name: 'app.properties' }" 
-              :class="{ active: activeItem === 'properties' }"
-              @click="closeNavbar"
-            >
-              <i class="fas fa-building" style="margin-right: 8px;" aria-hidden="true"></i> 
+            <RouterLink class="nav-link" :to="{ name: 'app.properties' }"
+              :class="{ active: activeItem === 'properties' }" @click="closeNavbar">
+              <i class="fas fa-building" style="margin-right: 8px;" aria-hidden="true"></i>
               Casas
             </RouterLink>
           </li>
           <li class="nav-item" role="none">
-            <RouterLink 
-              class="nav-link" 
-              :to="{ name: 'app.agents' }" 
-              :class="{ active: activeItem === 'agents' }"
-              @click="closeNavbar"
-            >
-              <i class="fas fa-users" style="margin-right: 8px;" aria-hidden="true"></i> 
+            <RouterLink class="nav-link" :to="{ name: 'app.agents' }" :class="{ active: activeItem === 'agents' }"
+              @click="closeNavbar">
+              <i class="fas fa-users" style="margin-right: 8px;" aria-hidden="true"></i>
               Agentes
             </RouterLink>
           </li>
           <li class="nav-item" role="none">
-            <RouterLink 
-              class="nav-link" 
-              :to="{ name: 'app.we' }" 
-              :class="{ active: activeItem === 'we' }"
-              @click="closeNavbar"
-            >
-              <i class="fas fa-info-circle" style="margin-right: 8px;" aria-hidden="true"></i> 
+            <RouterLink class="nav-link" :to="{ name: 'app.we' }" :class="{ active: activeItem === 'we' }"
+              @click="closeNavbar">
+              <i class="fas fa-info-circle" style="margin-right: 8px;" aria-hidden="true"></i>
               Sobre
             </RouterLink>
           </li>
@@ -67,48 +45,37 @@
 
         <div class="navbar-user-section d-flex align-items-center">
 
-            <div class="user-menu me-3" v-if="isLoggedIn">
-              <button
-                class="btn btn-user-menu d-flex align-items-center"
-                @click="toggleUserMenu"
-                :aria-expanded="userMenuOpen"
-                aria-label="Menu do usuário"
-              >
-                <img 
-                  :src="userAvatar" 
-                  :alt="`Avatar de ${userName}`" 
-                  class="user-avatar"
-                />
-                <span class="user-name d-none d-md-inline ms-2">{{ userName }}</span>
-                <i 
-                  class="fas fa-chevron-down ms-1"
-                  :class="{ 'rotate-180': userMenuOpen }"
-                ></i>
-              </button>
+          <div class="user-menu me-3" v-if="isLoggedIn">
+            <button class="btn btn-user-menu d-flex align-items-center" @click="toggleUserMenu"
+              :aria-expanded="userMenuOpen" aria-label="Menu do usuário">
+              <img :src="userAvatar" :alt="`Avatar de ${userName}`" class="user-avatar" />
+              <span class="user-name d-none d-md-inline ms-2">{{ userName }}</span>
+              <i class="fas fa-chevron-down ms-1" :class="{ 'rotate-180': userMenuOpen }"></i>
+            </button>
 
-              <div class="user-dropdown" :class="{ show: userMenuOpen }">
-                <ul class="user-menu-list">
-                  <li>
-                    <RouterLink 
-                      class="dropdown-item" 
-                      :to="{ name: 'app.user.favorites.properties' }" 
-                      @click="closeUserMenu"
-                    >
-                      <i class="fas fa-heart me-2"></i>
-                      Lista de Adoradas
-                    </RouterLink>
-                  </li>
-                  <li>
-                    <RouterLink 
-                      class="dropdown-item" 
-                      :to="{ name: 'app.user.profile' }" 
-                      @click="closeUserMenu"
-                    >
-                      <i class="fas fa-user me-2"></i>
-                      Meu Perfil
-                    </RouterLink>
-                  </li>
-                  
+            <div class="user-dropdown" :class="{ show: userMenuOpen }">
+              <ul class="user-menu-list">
+                <li>
+                  <RouterLink class="dropdown-item" :to="{ name: 'app.user.favorites.properties' }"
+                    @click="closeUserMenu">
+                    <i class="fas fa-heart me-2"></i>
+                    Lista de Adoradas
+                  </RouterLink>
+                </li>
+                <li>
+                  <RouterLink class="dropdown-item" :to="{ name: 'app.user.profile' }" @click="closeUserMenu">
+                    <i class="fas fa-user me-2"></i>
+                    Meu Perfil
+                  </RouterLink>
+                </li>
+                <li>
+                  <RouterLink class="dropdown-item" :to="{ name: 'app.user.properties' }" @click="closeUserMenu">
+                    <i class="fas fa-home me-2"></i>
+                    Meus Anúncios
+                  </RouterLink>
+                </li>
+
+                <!--                   
                   <li>
                     <a
                       class="dropdown-item" 
@@ -117,36 +84,29 @@
                       Legalizar Casas
                     </a>
                   </li>
+                -->
 
-                  
-                  <li><hr class="dropdown-divider"></li>
-                  <li>
-                    <button 
-                      class="dropdown-item text-danger" 
-                      @click="logout"
-                    >
-                      <i class="fas fa-sign-out-alt me-2"></i>
-                      Sair
-                    </button>
-                  </li>
-                </ul>
-              </div>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li>
+                  <button class="dropdown-item text-danger" @click="logout">
+                    <i class="fas fa-sign-out-alt me-2"></i>
+                    Sair
+                  </button>
+                </li>
+              </ul>
             </div>
+          </div>
 
-          
 
 
-            <button
-              class="btn btn-announce"
-              @click="announceProperty"
-              :disabled="isAnnouncing"
-              :aria-busy="isAnnouncing"
-              :aria-label="isAnnouncing ? 'Carregando...' : 'Anunciar nova casa'"
-              v-if="!isLoggedIn"
-            >
-              <i class="fas fa-plus me-2" :aria-hidden="true"></i>
-              <span>{{ isAnnouncing ? 'Carregando...' : 'Anunciar Casa' }}</span>
-            </button>
+
+          <button class="btn btn-announce" @click="announceProperty" :disabled="isAnnouncing" :aria-busy="isAnnouncing"
+            :aria-label="isAnnouncing ? 'Carregando...' : 'Anunciar nova casa'" v-if="!isLoggedIn">
+            <!-- <i class="fas fa-plus me-2" :aria-hidden="true"></i> -->
+            <span>{{ isAnnouncing ? 'Carregando...' : 'Postar Casa' }}</span>
+          </button>
 
         </div>
       </div>
@@ -188,14 +148,14 @@ const logoStyle = computed(() => ({
 const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api/v1';
 
 interface User {
-    id?: string;
-    name: string;
-    email: string;
-    phone: string;
-    about: string;
-    avatar?: string;
-    createdAt?: string;
-    photo?: string;
+  id?: string;
+  name: string;
+  email: string;
+  phone: string;
+  about: string;
+  avatar?: string;
+  createdAt?: string;
+  photo?: string;
 }
 
 let userNow: User;
@@ -212,7 +172,7 @@ const activeItem = computed(() => props.active)
 const isActive = (name: string) => computed(() => route.name === name)
 
 const userName = userNow.name
-const userAvatar = computed(() => 
+const userAvatar = computed(() =>
   'https://ui-avatars.com/api/?name=' + encodeURIComponent(userName) + '&background=dc3545&color=fff&size=32&rounded=true'
 )
 
@@ -245,9 +205,9 @@ const updateBodyOverflow = () => {
 const scrollToSection = (selector: string) => {
   const target = document.querySelector(selector)
   if (target) {
-    target.scrollIntoView({ 
-      behavior: 'smooth', 
-      block: 'start' 
+    target.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
     })
     closeNavbar()
   }
@@ -276,7 +236,7 @@ const logout = async () => {
     Cookies.remove('auth');
     Cookies.remove('user');
 
-    await routerInstance.push({ name: 'app.home' })
+    await routerInstance.push({ name: 'app.auth.login' })
   } finally {
     closeUserMenu()
     closeNavbar()
@@ -563,6 +523,7 @@ onUnmounted(() => {
     order: 1;
     width: 100%;
   }
+
   .btn-user-menu {
     order: 1;
     width: 100%;
@@ -590,6 +551,6 @@ onUnmounted(() => {
     width: 100%;
   }
 
-  
+
 }
 </style>

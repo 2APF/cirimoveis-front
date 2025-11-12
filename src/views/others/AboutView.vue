@@ -19,7 +19,8 @@
       </div>
     </section>
 
-    <!-- Mission, Vision, Values Section -->
+    
+    
     <section class="mission-vision-values py-5">
       <div class="container">
         <h2 class="section-title">Nossa Essência</h2>
@@ -68,7 +69,6 @@
         <div class="row g-4">
           <div class="col-lg-6">
             <div class="why-open-content" :class="{ visible: whyOpenVisible }">
-              <h3>Acessibilidade para Todos</h3>
               <p>Na Cirimoveis, acreditamos que encontrar um lar deve ser uma experiência aberta e acessível. Mantemos nossa plataforma aberta para garantir que qualquer pessoa, em qualquer canto de Angola, possa explorar propriedades sem barreiras, com informações claras e confiáveis.</p>
               <p>Nosso modelo aberto promove transparência, permitindo que clientes, corretores e parceiros colaborem livremente, fortalecendo a confiança e a comunidade no mercado imobiliário.</p>
             </div>

@@ -117,7 +117,7 @@ const topPropertiesChart = ref<HTMLCanvasElement | null>(null);
 const user = ref<User>({
   name: 'Admin User',
   email: 'admin@cirimoveis.ao',
-  phone: '+244 123 456 789',
+  phone: '+244 952 321 174',
 });
 
 const toggleSidebar = () => {

@@ -1,587 +1,369 @@
 <template>
   <main class="main" id="top">
-    
     <NavbarComponent active="properties" />
 
-    
     <section id="home" class="hero d-flex align-items-center" :class="{ loaded: isHeroLoaded }">
       <div class="container">
         <div class="row">
           <div class="col-lg-8 mx-auto text-center hero-content">
             <h1>Encontre a Casa dos Seus Sonhos</h1>
-            <!-- <p>Propriedades verificadas em todo Angola, prontas para transformar sua visão em realidade</p> -->
+            <p class="hero-subtitle">Imóveis verificados em todo Angola, com filtros avançados e visualização detalhada
+            </p>
           </div>
         </div>
       </div>
     </section>
 
-
     <div class="container">
       <div class="filters">
-        <h3 class="filters-title">Pesquise o Seu Imóvel Ideal</h3>
-        <div class="row g-3">
-          <div class="col-lg-2 col-md-4 col-sm-6 position-relative">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Pesquisar Província"
-              v-model="filters.province"
-              @input="filterCities"
-              @focus="showCitySuggestions = true"
-              @blur="delayHideCitySuggestions"
-              aria-label="Pesquisar Província"
-            >
-            <ul class="city-suggestions" v-if="showCitySuggestions && filteredCities.length">
-              <li
-                v-for="city in filteredCities"
-                :key="city"
-                @mousedown.prevent="selectCity(city)"
-                class="city-suggestion-item"
-              >
-                {{ city }}
-              </li>
-            </ul>
+        <h3 class="filters-title">Filtre o Seu Imóvel Ideal</h3>
+        <div class="row g-3 align-items-end">
+          <div class="col-lg-3 col-md-6 col-sm-12">
+            <input type="text" class="form-control" placeholder="Título do imóvel" v-model="filters.title"
+              @input="debouncedApplyFilters" />
           </div>
-          <div class="col-lg-2 col-md-4 col-sm-6" v-for="filter in selectFilters" :key="filter.label">
-            <select
-              class="form-select"
-              :aria-label="filter.label"
-              v-model="filters[filter.key]"
-              @change="handleFilterChange($event)"
-            >
-              <option v-for="option in filter.options" :value="option" :key="option">
-                {{ option }}
-              </option>
+
+          <!-- <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="radio-group">
+              <label class="radio-label"><input type="radio" v-model="filters.type" value="" checked> Todos</label>
+              <label class="radio-label"><input type="radio" v-model="filters.type" value="1"> Venda</label>
+              <label class="radio-label"><input type="radio" v-model="filters.type" value="2"> Aluguel</label>
+            </div>
+          </div> -->
+
+          <div class="col-lg-3 col-md-3 col-sm-6">
+            <select class="form-select" v-model="filters.price_range" @change="applyFilters">
+              <option value="">Preço</option>
+              <option value="0-5000000">Até 5M AOA</option>
+              <option value="5000000-10000000">5M - 10M AOA</option>
+              <option value="10000000-25000000">10M - 25M AOA</option>
+              <option value="25000000-50000000">25M - 50M AOA</option>
+              <option value="50000000-100000000">50M - 100M AOA</option>
+              <option value="100000000-200000000">100M - 200M AOA</option>
+              <option value="200000000+">Mais de 200M AOA</option>
             </select>
           </div>
-          <div class="col-lg-2 col-md-4 col-sm-6">
-            <div class="form-check mt-3" v-for="checkbox in checkboxFilters" :key="checkbox.id">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                :id="checkbox.id"
-                v-model="filters[checkbox.id]"
-              >
-              <label class="form-check-label" :for="checkbox.id">{{ checkbox.label }}</label>
+
+          <div class="col-lg-3 col-md-3 col-sm-6">
+            <select class="form-select" v-model="filters.condition" @change="applyFilters">
+              <option value="">Estado</option>
+              <option value="1">Novo</option>
+              <option value="2">Usado</option>
+              <option value="3">Reformado</option>
+            </select>
+          </div>
+
+          <div class="col-lg-2 col-md-3 col-sm-6">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="verification" v-model="filters.verification"
+                @change="applyFilters">
+              <label class="form-check-label" for="verification">Verificadas</label>
             </div>
           </div>
-          <div class="col-lg-2 col-md-4 col-sm-12">
-            <button
-              class="btn filter-btn w-100"
-              @click="applyFilters"
-              :disabled="isFiltering"
-            >
-              <i :class="isFiltering ? 'fas fa-spinner fa-spin me-2' : 'fas fa-search me-2'"></i>
-              {{ isFiltering ? 'Pesquisando...' : 'Pesquisar' }}
+
+          <div class="col-lg-1 col-md-3 col-sm-12">
+            <button class="btn filter-btn w-100" @click="applyFilters" :disabled="isFiltering">
+              <i :class="isFiltering ? 'fas fa-spinner fa-spin' : 'fas fa-search'"></i>
             </button>
           </div>
         </div>
       </div>
     </div>
-    
 
     <section id="propriedades" class="properties-section py-5">
       <div class="container">
-        <!-- <h2 class="section-title">Todas as Propriedades</h2> -->
-        <div class="row">
-          <div
-            class="col-12 col-md-4 col-lg-4"
-            v-for="property in properties"
-            :key="property.id"
-          >
-            <div
-              class="property-card"
-              :data-property-id="property.id"
-              :class="{ visible: property.visible }"
-              @click="showPropertyDetails(property)"
-            >
-              <div
-                class="property-image"
-                :style="{ backgroundImage: `url(${property.image})` }"
-              >
-                <button
-                  class="favorite-btn"
-                  :class="{ favorited: favorites.includes(property.id) }"
-                  @click.stop="toggleFavorite(property.id)"
-                >
-                  <i :class="favorites.includes(property.id) ? 'fas fa-heart' : 'far fa-heart'"></i>
-                </button>
-                <div v-if="property.verified" class="verified-badge">
-                  <i class="fas fa-check me-1"></i>Verificada
+        
+        <div v-if="isLoading" class="text-center py-5">
+          <div class="spinner-border text-danger" role="status">
+            <span class="visually-hidden">Carregando...</span>
+          </div>
+          <p class="mt-3 text-muted">Buscando imóveis...</p>
+        </div>
+
+        <div v-else-if="properties.length === 0" class="empty-state text-center py-5">
+          <i class="fas fa-home fa-4x text-muted mb-3"></i>
+          <h3>Nenhum imóvel encontrado</h3>
+          <p class="text-muted">Tente ajustar os filtros ou explore outras opções.</p>
+        </div>
+
+        <div v-else class="row g-3">
+          <div v-for="property in properties" :key="property.id" class="col-12 col-md-4 col-lg-4">
+            <div class="property-card" @click="goToDetail(property.id)">
+              <div class="property-image" :style="{ backgroundImage: `url(${property.photo})` }">
+                <div v-if="property.views >= 1000" class="views-badge">
+                  <i class="fas fa-fire text-white me-1"></i>
+                  Muito Vista
                 </div>
-                <div class="price-tag">{{ property.price }}</div>
+                <div v-if="property.verification" class="verified-badge">
+                  <i class="fas fa-check"></i> Verificada
+                </div>
+                <div class="price-tag">
+                  {{ formatPrice(property.price) }} AOA
+                  <span v-if="property.type === '2'" class="price-suffix">/mês</span>
+                </div>
               </div>
+
               <div class="property-info">
-                <h5 class="property-title">{{ property.title }}</h5>
+                <h5 class="property-title">{{ property.name }}</h5>
                 <p class="property-location">
-                  <i class="fas fa-map-marker-alt me-1"></i>{{ property.location }}
+                  <i class="fas fa-map-marker-alt me-1"></i>
+                  {{ property.address }}
                 </p>
+
                 <div class="property-features">
                   <span><i class="fas fa-bed me-1"></i>{{ property.bedrooms }} Quartos</span>
                   <span><i class="fas fa-bath me-1"></i>{{ property.bathrooms }} WC</span>
                   <span><i class="fas fa-ruler-combined me-1"></i>{{ property.area }}m²</span>
                 </div>
-                <p class="property-status">Estado: {{ property.status }}</p>
-                
+
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                  <small class="text-muted">
+                    <i class="fas fa-eye me-1"></i>{{ property.views }} visualizações
+                  </small>
+                  <button class="btn-visit" @click.stop="goToDetail(property.id)">
+                    <i class="fas fa-eye me-1"></i>Visitar Casa
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
+
+        <div v-if="totalPages > 1" class="pagination-wrapper mt-5">
+          <nav aria-label="Paginação de imóveis">
+            <ul class="pagination justify-content-center">
+              <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                <button class="page-link" @click="changePage(currentPage - 1)" :disabled="currentPage === 1">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+              </li>
+              <li v-for="page in visiblePages" :key="page" class="page-item" :class="{ active: page === currentPage }">
+                <button class="page-link" @click="changePage(page)">
+                  {{ page }}
+                </button>
+              </li>
+              <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                <button class="page-link" @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </div>
       </div>
     </section>
 
-
-    
-    <FooterComponent />
-
-    <!-- Floating Filter Button -->
-    <button
-      class="floating-filter-btn"
-      :class="{ visible: showFloatingButton }"
-      id="floatingFilterBtn"
-      title="Filtrar Casas"
-      @click="scrollToFilters"
-    >
-      <i class="fas fa-filter fa-lg"></i>
+    <button class="floating-filter-btn" :class="{ visible: showFloatingButton }" @click="scrollToFilters"
+      title="Filtrar Imóveis">
+      <i class="fas fa-filter"></i>
     </button>
 
-    <!-- Scroll to Top Button -->
-    <button
-      id="scrollToTopBtn"
-      class="btn btn-danger position-fixed rounded-circle"
-      :style="{ display: showScrollToTop ? 'block' : 'none' }"
-      @click="scrollToTop"
-    >
+    <button id="scrollToTopBtn" class="btn btn-danger position-fixed rounded-circle"
+      :style="{ display: showScrollToTop ? 'block' : 'none' }" @click="scrollToTop">
       <i class="fas fa-arrow-up"></i>
     </button>
 
-    <!-- Notification -->
-    <div v-if="notification.message" class="alert" :class="notification.type">
-      <i :class="notification.type === 'success' ? 'fas fa-check-circle' : 'fas fa-info-circle'"></i>
-      {{ notification.message }}
-    </div>
+    <FooterComponent />
   </main>
 </template>
 
 <script setup lang="ts">
-import FooterComponent from '@/components/FooterComponent.vue';
-import NavbarComponent from '@/components/NavbarComponent.vue';
-import router from '@/router';
-import { ref, onMounted, computed } from 'vue';
-import { Carousel, Slide, Navigation } from 'vue3-carousel';
-import 'vue3-carousel/dist/carousel.css';
+import { ref, onMounted, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import NavbarComponent from '@/components/NavbarComponent.vue'
+import FooterComponent from '@/components/FooterComponent.vue'
+import axios from 'axios'
+import Cookies from 'js-cookie'
+
+const router = useRouter()
+const API_URL = (import.meta.env.VITE_API_BASE_URL as string) || 'https://api.cirimoveis.com/api/v1'
 
 interface Property {
-  id: string;
-  title: string;
-  location: string;
-  price: string;
-  image: string;
-  bedrooms: number;
-  bathrooms: number;
-  area: number;
-  status: string;
-  verified: boolean;
-  visible: boolean;
+  id: number
+  name: string
+  description: string
+  price: number
+  address: string
+  type: string
+  bedrooms: number
+  bathrooms: number
+  area: string
+  status: string
+  views: number
+  category_id: number
+  user_id: number
+  year_built: number
+  condition: string
+  availability: string
+  garages: string
+  garden: string
+  swimming_pool: string
+  air_conditioning: string
+  featured: string
+  created_at: string
+  photos: string
+  photo: string
+  verification: boolean
 }
 
-interface Filter {
-  label: string;
-  key: string;
-  options: string[];
+const isHeroLoaded = ref(false)
+const isLoading = ref(true)
+const isFiltering = ref(false)
+const showFloatingButton = ref(false)
+const showScrollToTop = ref(false)
+
+const properties = ref<Property[]>([])
+const currentPage = ref(1)
+const totalPages = ref(1)
+const perPage = 9
+
+const filters = ref({
+  title: '',
+  type: '',
+  price_range: '',
+  condition: '',
+  verification: false
+})
+
+let debounceTimer: ReturnType<typeof setTimeout> | null = null
+
+const debouncedApplyFilters = () => {
+  if (debounceTimer) clearTimeout(debounceTimer)
+  debounceTimer = setTimeout(() => {
+    currentPage.value = 1
+    applyFilters()
+  }, 600)
 }
 
-interface Filters {
-  [key: string]: string | boolean;
+const loadProperties = async () => {
+  try {
+    isLoading.value = true
+    const token = Cookies.get('token')
+    const params: any = {
+      page: currentPage.value,
+      per_page: perPage
+    }
+
+    if (filters.value.title) params.name = filters.value.title
+    if (filters.value.type) params.type = filters.value.type
+    if (filters.value.condition) params.condition = filters.value.condition
+    if (filters.value.verification) params.verification = 1
+
+    if (filters.value.price_range) {
+      const [min, max] = filters.value.price_range.split('-')
+      if (min) params.price_min = min
+      if (max && max !== '+') params.price_max = max
+      else if (max === '+') params.price_min = min
+    }
+
+
+
+    const response = await axios.get(`${API_URL}/product/list`, {
+      params,
+      headers: token ? { Authorization: `Bearer ${token}` } : {}
+    })
+
+    const data = response.data
+
+    properties.value = (data.products || []).map((p: any) => {
+      const photos = parsePhotos(p.photos)
+      return {
+        ...p,
+        photo: photos[0]?.url || '/placeholder.jpg',
+        // verified: p.verified === '1' || p.verified === 1
+      }
+    })
+
+    currentPage.value = data.current_page || 1
+    totalPages.value = data.last_page || 1
+  } catch (error) {
+    console.error('Erro ao carregar imóveis:', error)
+  } finally {
+    isLoading.value = false
+  }
 }
-
-interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-  bio: string;
-  image: string;
-  social: { platform: string; link: string; icon: string }[];
-}
-
-
-const isHeroLoaded = ref(false);
-const isFiltering = ref(false);
-const showFloatingButton = ref(false);
-const showScrollToTop = ref(false);
-const showCitySuggestions = ref(false);
-const favorites = ref<string[]>(JSON.parse(localStorage.getItem('favorites') || '[]'));
-const citySearchTimeout = ref<ReturnType<typeof setTimeout> | null>(null);
-
-const notification = ref({
-  message: '',
-  type: 'success' as 'success' | 'info',
-});
-
-// City Search
-const cities = ref<string[]>([
-  'Luanda', 'Benguela', 'Huíla', 'Cabinda', 'Huambo', 'Moxico', 'Namibe', 'Lobito',
-  'Lubango', 'Kuito', 'Malanje', 'Uíge', 'Sumbe', 'N’dalatando', 'M’banza-Kongo'
-]);
-const filteredCities = ref<string[]>([]);
-
-// Filters
-const selectFilters = ref<Filter[]>([
-  {
-    label: 'Preço (AOA)',
-    key: 'price',
-    options: ['Preço (AOA)', 'Até 5M Kz', '5M - 10M Kz', '10M - 25M Kz', '25M - 50M Kz', '50M - 100M Kz', '100M - 200M Kz', 'Mais de 200M Kz'],
-  },
-  {
-    label: 'Estado',
-    key: 'status',
-    options: ['Estado', 'Em Construção', 'Inacabada', 'Pronta'],
-  },
-  {
-    label: 'Tipologia',
-    key: 'type',
-    options: ['Tipologia', 'T1', 'T2', 'T3', 'T4', 'T5', 'T6+'],
-  },
-  {
-    label: 'Área',
-    key: 'area',
-    options: ['Área', 'Até 50m²', '50m² - 100m²', '100m² - 200m²', '200m² - 500m²', 'Mais de 500m²'],
-  }
-]);
-
-const checkboxFilters = ref([
-  { id: 'verified', label: 'Apenas Verificadas' },
-]);
-
-const filters = ref<Filters>({
-  province: '',
-  price: 'Preço (AOA)',
-  status: 'Estado',
-  type: 'Tipologia',
-  bedrooms: 'Quartos',
-  bathrooms: 'WC',
-  area: 'Área',
-  garage: 'Garagem',
-  verified: false,
-  piscina: false,
-  jardim: false,
-  arcondicionado: false,
-});
-
-// Properties Data
-const properties = ref<Property[]>([
-  {
-    id: '1',
-    title: 'Moradia T3 Moderna',
-    location: 'Luanda, Talatona',
-    price: '45M Kz',
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80',
-    bedrooms: 3,
-    bathrooms: 2,
-    area: 150,
-    status: 'Pronta para Morar',
-    verified: true,
-    visible: false,
-  },
-  {
-    id: '2',
-    title: 'Casa T4 em Construção',
-    location: 'Luanda, Ilha do Cabo',
-    price: '32M Kz',
-    image: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80',
-    bedrooms: 4,
-    bathrooms: 3,
-    area: 200,
-    status: 'Em Construção',
-    verified: false,
-    visible: false,
-  },
-  {
-    id: '3',
-    title: 'Villa Luxuosa T5',
-    location: 'Luanda, Miramar',
-    price: '75M Kz',
-    image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80',
-    bedrooms: 5,
-    bathrooms: 4,
-    area: 300,
-    status: 'Inacabada',
-    verified: true,
-    visible: false,
-  },
-  {
-    id: '4',
-    title: 'Casa T3 Inacabada',
-    location: 'Benguela, Centro',
-    price: '55M Kz',
-    image: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=800&q=80',
-    bedrooms: 3,
-    bathrooms: 2,
-    area: 140,
-    status: 'Inacabada',
-    verified: false,
-    visible: false,
-  },
-  {
-    id: '5',
-    title: 'Casa T2 Pronta',
-    location: 'Huambo, Periferia',
-    price: '28M Kz',
-    image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80',
-    bedrooms: 2,
-    bathrooms: 1,
-    area: 85,
-    status: 'Pronta para Morar',
-    verified: true,
-    visible: false,
-  },
-  {
-    id: '6',
-    title: 'Moradia T4 em Construção',
-    location: 'Cabinda, Centro',
-    price: '38M Kz',
-    image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80',
-    bedrooms: 4,
-    bathrooms: 3,
-    area: 180,
-    status: 'Em Construção',
-    verified: false,
-    visible: false,
-  },
-]);
-
-// Computed property for featured properties
-const featuredProperties = computed(() => properties.value.slice(0, 6));
-
-// Carousel settings
-const itemsToShow = ref(window.innerWidth < 768 ? 1 : 3);
-const carouselBreakpoints = ref({
-  0: {
-    itemsToShow: 1,
-    itemsToScroll: 1,
-  },
-  768: {
-    itemsToShow: 3,
-    itemsToScroll: 1,
-  },
-});
-
-// Team Members Data
-const teamMembers = ref<TeamMember[]>([
-  {
-    id: '1',
-    name: 'Ana Silva',
-    role: 'Gestora Imobiliária',
-    bio: 'Com mais de 10 anos de experiência, Ana especializa-se em encontrar residências perfeitas em Luanda e arredores.',
-    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&q=80',
-    social: [
-      { platform: 'linkedin', link: '#', icon: 'fab fa-linkedin-in' },
-      { platform: 'twitter', link: '#', icon: 'fab fa-twitter' },
-    ],
-  },
-  {
-    id: '2',
-    name: 'João Mendes',
-    role: 'Corretor de Imóveis',
-    bio: 'João é dedicado a proporcionar um serviço excepcional, ajudando clientes a encontrar casas em Benguela e Huíla.',
-    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
-    social: [
-      { platform: 'linkedin', link: '#', icon: 'fab fa-linkedin-in' },
-      { platform: 'instagram', link: '#', icon: 'fab fa-instagram' },
-    ],
-  },
-  {
-    id: '3',
-    name: 'Maria Costa',
-    role: 'Consultora de Investimentos',
-    bio: 'Maria foca em investimentos imobiliários, garantindo alto retorno para clientes em todo Angola.',
-    image: 'https://images.unsplash.com/photo-1485206412256-7016b7798b1c?auto=format&fit=crop&w=400&q=80',
-    social: [
-      { platform: 'linkedin', link: '#', icon: 'fab fa-linkedin-in' },
-      { platform: 'facebook', link: '#', icon: 'fab fa-facebook-f' },
-    ],
-  },
-  {
-    id: '4',
-    name: 'Pedro Almeida',
-    role: 'Diretor de Marketing',
-    bio: 'Pedro lidera estratégias de marketing inovadoras para promover propriedades exclusivas da Cirimoveis.',
-    image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80',
-    social: [
-      { platform: 'linkedin', link: '#', icon: 'fab fa-linkedin-in' },
-      { platform: 'twitter', link: '#', icon: 'fab fa-twitter' },
-    ],
-  },
-]);
-
-// Methods
-const updateCarouselItems = () => {
-  itemsToShow.value = window.innerWidth < 768 ? 1 : 3;
-};
-
-const scrollToSection = (href: string) => {
-  const target = document.querySelector(href);
-  if (target) {
-    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-};
-
-const scrollToFilters = () => {
-  const filtersSection = document.querySelector('.filters');
-  if (filtersSection) {
-    filtersSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-};
-
-const scrollToTop = () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-};
-
-const updateFilterBorder = (element: HTMLSelectElement) => {
-  element.style.borderColor = element.value && element.value !== element.options[0].value ? 'var(--primary-red)' : '#e5e7eb';
-};
-
-const handleFilterChange = (event: Event) => {
-  const target = event.target;
-  if (target && target instanceof HTMLSelectElement) {
-    updateFilterBorder(target);
-  }
-};
-
-const filterCities = () => {
-  const province = filters.value.province;
-  const searchTerm = typeof province === 'string' ? province.toLowerCase().trim() : '';
-  if (searchTerm) {
-    filteredCities.value = cities.value.filter(city =>
-      city.toLowerCase().includes(searchTerm)
-    ).slice(0, 5);
-  } else {
-    filteredCities.value = [];
-  }
-};
-
-const selectCity = (city: string) => {
-  filters.value.province = city;
-  filteredCities.value = [];
-  showCitySuggestions.value = false;
-};
-
-const delayHideCitySuggestions = () => {
-  citySearchTimeout.value = setTimeout(() => {
-    showCitySuggestions.value = false;
-  }, 200);
-};
 
 const applyFilters = () => {
-  isFiltering.value = true;
-  setTimeout(() => {
-    isFiltering.value = false;
-    showNotification('Filtros aplicados!', 'success');
-  }, 1500);
-};
+  isFiltering.value = true
+  currentPage.value = 1
+  loadProperties().finally(() => {
+    isFiltering.value = false
+  })
+}
 
-const toggleFavorite = (propertyId: string) => {
-  const isFavorited = favorites.value.includes(propertyId);
-  if (isFavorited) {
-    favorites.value = favorites.value.filter(id => id !== propertyId);
-    showNotification('Removido dos favoritos', 'info');
-  } else {
-    favorites.value.push(propertyId);
-    showNotification('Adicionado aos favoritos', 'success');
+const changePage = (page: number | string) => {
+  const pageNum = Number(page)
+  if (!Number.isInteger(pageNum)) return
+  if (pageNum < 1 || pageNum > totalPages.value || pageNum === currentPage.value) return
+  currentPage.value = pageNum
+  loadProperties()
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+const visiblePages = computed(() => {
+  const delta = 2
+  const range = []
+  for (let i = Math.max(2, currentPage.value - delta); i <= Math.min(totalPages.value - 1, currentPage.value + delta); i++) {
+    range.push(i)
   }
-  localStorage.setItem('favorites', JSON.stringify(favorites.value));
-};
+  if (currentPage.value - delta > 2) range.unshift('...')
+  if (currentPage.value + delta < totalPages.value - 1) range.push('...')
+  range.unshift(1)
+  if (totalPages.value > 1) range.push(totalPages.value)
+  return range
+})
 
-const showPropertyDetails = (property: Property) => {
-//  alert(`Detalhes:\n${property.title}\n${property.location}\nPreço: ${property.price}`);
+const parsePhotos = (photosString: string): any[] => {
+  try {
+    const cleaned = photosString.replace(/\\\//g, '/')
+    const parsed = JSON.parse(cleaned)
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
 
-router.push({ name: 'app.property.detail', params: { id: property.id } })
-};
+const formatPrice = (price: number) => {
+  return new Intl.NumberFormat('pt-AO', { minimumFractionDigits: 0 }).format(price)
+}
 
-const showNotification = (message: string, type: 'success' | 'info') => {
-  notification.value = { message, type };
-  setTimeout(() => {
-    notification.value = { message: '', type: 'success' };
-  }, 3000);
-};
+const goToDetail = (id: number) => {
+  router.push({ name: 'app.property.detail', params: { id } })
+}
 
-// Lifecycle Hooks
+const scrollToFilters = () => {
+  document.querySelector('.filters')?.scrollIntoView({ behavior: 'smooth' })
+}
+
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
 onMounted(() => {
-  // Initialize hero section
   setTimeout(() => {
-    isHeroLoaded.value = true;
-    document.body.style.opacity = '1';
-  }, 100);
+    isHeroLoaded.value = true
+  }, 100)
 
-  // Initialize Intersection Observer for property and team cards
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const propertyId = (entry.target as HTMLElement).dataset.propertyId;
-          const property = properties.value.find(p => p.id === propertyId);
-          if (property) {
-            property.visible = true;
-            (entry.target as HTMLElement).style.animation = 'fadeInUp 0.6s ease forwards';
-          }
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.1 }
-  );
+  loadProperties()
 
-  // Observe property and team cards
-  setTimeout(() => {
-    document.querySelectorAll('.property-card, .team-card').forEach((card, index) => {
-      (card as HTMLElement).style.transitionDelay = `${index * 0.1}s`;
-      observer.observe(card);
-    });
-  }, 100);
-
-  // Scroll events
   const handleScroll = () => {
-    showFloatingButton.value = window.scrollY > 400;
-    showScrollToTop.value = window.scrollY > 300;
-  };
-  window.addEventListener('scroll', handleScroll);
+    showFloatingButton.value = window.scrollY > 500
+    showScrollToTop.value = window.scrollY > 300
+  }
+  window.addEventListener('scroll', handleScroll)
 
-  // Window resize for carousel
-  window.addEventListener('resize', updateCarouselItems);
-
-  // Initialize price tag hover effects
-  document.querySelectorAll('.price-tag').forEach(tag => {
-    const original = tag.textContent || '';
-    tag.addEventListener('mouseenter', () => {
-      tag.innerHTML = `<i class="fas fa-money-bill-wave me-1"></i>${original}`;
-    });
-    tag.addEventListener('mouseleave', () => {
-      tag.textContent = original;
-    });
-  });
-
-  // Initialize favorites from localStorage
-  favorites.value.forEach(id => {
-    const btn = document.querySelector(`[data-property-id="${id}"] .favorite-btn`);
-    if (btn) {
-      btn.querySelector('i')?.classList.replace('far', 'fas');
-      btn.classList.add('favorited');
-    }
-  });
-
-  // Cleanup
   return () => {
-    window.removeEventListener('scroll', handleScroll);
-    window.removeEventListener('resize', updateCarouselItems);
-    if (citySearchTimeout.value) {
-      clearTimeout(citySearchTimeout.value);
-    }
-  };
-});
+    window.removeEventListener('scroll', handleScroll)
+    if (debounceTimer) clearTimeout(debounceTimer)
+  }
+})
+
+watch(currentPage, () => {
+  loadProperties()
+})
 </script>
 
-<style scoped> 
-
+<style scoped>
 .main {
   min-height: 100vh;
   background: var(--light-bg);
@@ -600,9 +382,9 @@ onMounted(() => {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80') no-repeat center/cover;
+  right: 0;
+  bottom: 0;
+  background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80') center/cover;
   opacity: 0.08;
   z-index: 0;
 }
@@ -612,7 +394,7 @@ onMounted(() => {
   z-index: 1;
   opacity: 0;
   transform: translateY(20px);
-  transition: all 0.8s var(--animation-ease);
+  transition: all 0.8s ease;
 }
 
 .hero.loaded .hero-content {
@@ -624,112 +406,74 @@ onMounted(() => {
   font-size: 3.5rem;
   font-weight: 800;
   color: var(--dark-charcoal);
-  margin-bottom: 20px;
-  line-height: 1.2;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
 }
 
-.hero p {
+.hero-subtitle {
   font-size: 1.3rem;
   color: var(--medium-gray);
-  margin-bottom: 30px;
   font-weight: 500;
 }
+
 
 .filters {
   background: var(--card-bg);
   border-radius: 16px;
-  padding: 25px;
+  padding: 28px;
   box-shadow: 0 8px 30px var(--shadow-light);
-  margin-top: -40px;
+  margin: -60px auto 40px;
   position: relative;
   z-index: 10;
-  border: 1px solid var(--soft-red);
-  transition: box-shadow 0.3s var(--animation-ease);
+  max-width: 1200px;
+  border: 1px solid rgba(211, 47, 47, 0.15);
 }
 
-.filters:hover {
-  box-shadow: 0 12px 40px var(--shadow-medium);
+.properties-section {  
+  max-width: 1280px; 
+  margin: -60px auto 40px;
+  padding: 28px; 
 }
 
 .filters-title {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--dark-charcoal);
   margin-bottom: 20px;
   text-align: center;
-  position: relative;
 }
 
-.filters-title::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 30px;
-  height: 2px;
-  background: var(--primary-red);
+.radio-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-.city-suggestions {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: var(--card-bg);
-  border: 1px solid var(--soft-red);
-  border-radius: 8px;
-  box-shadow: 0 3px 10px var(--shadow-light);
-  list-style: none;
-  margin: 5px 0 0 0;
-  padding: 0;
-  z-index: 1000;
-  max-height: 180px;
-  overflow-y: auto;
-}
-
-.city-suggestion-item {
-  padding: 10px 15px;
-  cursor: pointer;
-  transition: all 0.2s var(--animation-ease);
-}
-
-.city-suggestion-item:hover {
-  background: var(--soft-red);
-  color: var(--primary-red);
-}
-
-.filter-btn {
-  background: linear-gradient(135deg, var(--primary-red), #e53935);
-  border: none;
-  border-radius: 12px;
-  padding: 12px 28px;
-  color: #fff;
-  font-weight: 600;
-  transition: all 0.3s var(--animation-ease);
-  box-shadow: 0 3px 10px rgba(211, 47, 47, 0.2);
-}
-
-.filter-btn:hover {
-  background: linear-gradient(135deg, #b71c1c, #d32f2f);
-  transform: translateY(-2px);
-}
-
-.form-select,
-.form-control {
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 10px 14px;
-  transition: all 0.3s var(--animation-ease);
+.radio-label {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
   color: var(--dark-charcoal);
-  background-color: var(--card-bg);
+  cursor: pointer;
+  font-size: 0.95rem;
 }
 
-.form-select:focus,
-.form-control:focus {
+.radio-label input {
+  margin-right: 6px;
+}
+
+.form-control,
+.form-select {
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 10px 14px;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
   border-color: var(--primary-red);
-  box-shadow: 0 0 0 0.15rem rgba(211, 47, 47, 0.1);
+  box-shadow: 0 0 0 0.2rem rgba(211, 47, 47, 0.15);
 }
 
 .form-check-input:checked {
@@ -737,62 +481,30 @@ onMounted(() => {
   border-color: var(--primary-red);
 }
 
-.form-check-label {
-  color: var(--dark-charcoal);
-  font-weight: 500;
+.filter-btn {
+  background: linear-gradient(135deg, var(--primary-red), #e53935);
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  color: white;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
 }
 
-.section-title {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: var(--dark-charcoal);
-  text-align: center;
-  margin-bottom: 20px;
-  position: relative;
-}
-
-.section-title::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 50px;
-  height: 2px;
-  background: var(--primary-red);
-  border-radius: 1px;
-}
-
-.section-subtitle {
-  font-size: 1.2rem;
-  font-weight: 500;
-  color: var(--medium-gray);
-  margin-bottom: 15px;
-}
-
-.section-intro {
-  font-size: 1rem;
-  color: var(--medium-gray);
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
+.filter-btn:hover {
+  background: linear-gradient(135deg, #b71c1c, #d32f2f);
+  transform: translateY(-2px);
 }
 
 .property-card {
   background: var(--card-bg);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 6px 20px var(--shadow-light);
-  transition: all 0.4s var(--animation-ease);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
   border: 1px solid var(--soft-red);
-  opacity: 0;
-  transform: translateY(20px);
+  transition: all 0.4s ease;
+  cursor: pointer;
   margin-bottom: 30px;
-}
-
-.property-card.visible {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .property-card:hover {
@@ -805,50 +517,34 @@ onMounted(() => {
   background-size: cover;
   background-position: center;
   position: relative;
-  transition: transform 0.5s var(--animation-ease);
+  transition: transform 0.5s ease;
 }
 
 .property-card:hover .property-image {
   transform: scale(1.03);
 }
 
-.favorite-btn {
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  background: rgba(255, 255, 255, 0.95);
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #ccc;
-  transition: all 0.3s var(--animation-ease);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.favorite-btn:hover {
-  color: var(--primary-red);
-  transform: scale(1.1);
-}
-
-.favorite-btn.favorited {
-  color: var(--primary-red);
-}
-
+.views-badge,
 .verified-badge {
   position: absolute;
   top: 15px;
-  right: 15px;
-  background: var(--primary-red);
-  color: #fff;
-  padding: 6px 12px;
-  border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(211, 47, 47, 0.2);
+  padding: 6px 12px;
+  border-radius: 20px;
+  z-index: 2;
+}
+
+.views-badge {
+  left: 15px;
+  background: rgba(255, 152, 0, 0.95);
+  color: white;
+}
+
+.verified-badge {
+  right: 15px;
+  background: var(--primary-red);
+  color: white;
 }
 
 .price-tag {
@@ -856,13 +552,17 @@ onMounted(() => {
   bottom: 15px;
   left: 15px;
   background: rgba(26, 26, 46, 0.9);
-  color: #fff;
+  color: white;
   padding: 10px 20px;
   border-radius: 25px;
   font-weight: 700;
   font-size: 1rem;
   backdrop-filter: blur(8px);
-  transition: all 0.3s var(--animation-ease);
+}
+
+.price-suffix {
+  font-size: 0.75rem;
+  opacity: 0.9;
 }
 
 .property-info {
@@ -874,10 +574,6 @@ onMounted(() => {
   font-weight: 700;
   color: var(--dark-charcoal);
   margin-bottom: 10px;
-}
-
-.property-card:hover .property-title {
-  color: var(--primary-red);
 }
 
 .property-location {
@@ -896,148 +592,54 @@ onMounted(() => {
   margin-bottom: 10px;
 }
 
-.property-status {
+.btn-visit {
+  background: linear-gradient(135deg, var(--primary-red), #e53935);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
   font-size: 0.85rem;
-  color: var(--primary-red);
   font-weight: 600;
+  transition: all 0.3s ease;
 }
 
-.carousel {
-  padding: 0 40px;
+.btn-visit:hover {
+  background: linear-gradient(135deg, #b71c1c, #d32f2f);
+  transform: translateY(-1px);
 }
 
-.carousel :deep(.carousel__prev),
-.carousel :deep(.carousel__next) {
-  width: 40px;
-  height: 40px;
-  background: rgba(26, 26, 46, 0.7);
-  border-radius: 50%;
-  top: 50%;
-  transform: translateY(-50%);
-  transition: background 0.3s var(--animation-ease);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.carousel :deep(.carousel__prev:hover),
-.carousel :deep(.carousel__next:hover) {
-  background: var(--primary-red);
-}
-
-.carousel :deep(.carousel__slide) {
-  padding: 0 15px;
-}
-
-.team-section {
-  background: linear-gradient(135deg, var(--light-bg), var(--soft-red));
-  padding: 60px 0;
-}
-
-.team-card {
-  background: var(--card-bg);
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 6px 20px var(--shadow-light);
-  transition: all 0.4s var(--animation-ease);
-  border: 1px solid var(--soft-red);
-  opacity: 0;
-  transform: translateY(20px);
-  margin-bottom: 30px;
-}
-
-.team-card.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.team-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 12px 30px var(--shadow-medium);
-}
-
-.team-image {
-  height: 220px;
-  background-size: cover;
-  background-position: center;
-  position: relative;
-}
-
-.team-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(180deg, transparent, rgba(26, 26, 46, 0.8));
-  opacity: 0;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  transition: opacity 0.3s var(--animation-ease);
-  padding-bottom: 20px;
-}
-
-.team-card:hover .team-overlay {
-  opacity: 1;
-}
-
-.team-social .social-icon {
-  color: #fff;
-  font-size: 1.3rem;
-  margin: 0 12px;
-  transition: all 0.3s var(--animation-ease);
-}
-
-.team-social .social-icon:hover {
-  color: var(--primary-red);
-  transform: scale(1.15);
-}
-
-.team-info {
-  padding: 25px;
-  text-align: center;
-}
-
-.team-name {
-  font-size: 1.25rem;
-  font-weight: 700;
+.pagination .page-link {
+  border: none;
   color: var(--dark-charcoal);
-  margin-bottom: 8px;
-}
-
-.team-role {
-  font-size: 1rem;
-  color: var(--primary-red);
-  margin-bottom: 10px;
+  padding: 8px 14px;
+  margin: 0 4px;
+  border-radius: 8px;
   font-weight: 600;
 }
 
-.team-bio {
-  font-size: 0.9rem;
-  color: var(--medium-gray);
-  margin-bottom: 0;
+.pagination .page-item.active .page-link {
+  background: var(--primary-red);
+  color: white;
 }
 
 .floating-filter-btn {
   position: fixed;
-  bottom: 60px;
+  bottom: 70px;
   right: 20px;
   z-index: 1000;
   background: var(--primary-red);
-  color: #fff;
+  color: white;
   border: none;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 56px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 3px 10px rgba(211, 47, 47, 0.2);
+  box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3);
   opacity: 0;
   transform: translateY(20px);
-  transition: all 0.3s var(--animation-ease);
+  transition: all 0.3s ease;
 }
 
 .floating-filter-btn.visible {
@@ -1046,183 +648,48 @@ onMounted(() => {
 }
 
 .floating-filter-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 5px 12px rgba(211, 47, 47, 0.3);
+  transform: scale(1.1) translateY(0);
 }
 
-.alert {
-  position: fixed;
-  top: 80px;
-  right: 15px;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  color: #fff;
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  box-shadow: 0 3px 10px var(--shadow-medium);
-  z-index: 9999;
-  animation: fadeIn 0.3s var(--animation-ease);
-}
-
-.alert.success {
-  background: #4caf50;
-}
-
-.alert.info {
-  background: #2196f3;
-}
-
-@media (min-width: 1400px) {
-  .container {
-    max-width: 1280px;
-  }
+#scrollToTopBtn {
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  z-index: 999;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 992px) {
-  .hero {
-    padding: 80px 0;
-    min-height: 60vh;
-  }
-
   .hero h1 {
     font-size: 2.8rem;
   }
 
   .filters {
+    margin: 20px 15px;
     padding: 20px;
-    margin: 15px 0;
+  }
+
+  .radio-group {
+    justify-content: flex-start;
   }
 }
 
 @media (max-width: 768px) {
+  .hero {
+    padding: 80px 0;
+  }
+
   .hero h1 {
     font-size: 2.4rem;
   }
 
-  .hero p {
-    font-size: 1.1rem;
-  }
-
-  .filters {
-    margin: 15px;
-    padding: 20px;
-    border-radius: 12px;
-  }
-
-  .filters-title {
-    font-size: 1.3rem;
-  }
-
-  .filter-btn {
-    margin-top: 15px;
-  }
-
-  .section-title {
-    font-size: 2rem;
-  }
-
-  .section-subtitle {
-    font-size: 1.1rem;
-  }
-
-  .section-intro {
-    font-size: 0.95rem;
+  .filters .row>div {
+    margin-bottom: 12px;
   }
 
   .property-image {
     height: 220px;
   }
-
-  .floating-filter-btn {
-    bottom: 50px;
-    right: 15px;
-    width: 48px;
-    height: 48px;
-  }
-
-  .filters .row > div {
-    flex: 0 0 50%;
-    max-width: 50%;
-  }
-}
-
-@media (max-width: 576px) {
-  .hero h1 {
-    font-size: 2rem;
-  }
-
-  .hero p {
-    font-size: 1rem;
-  }
-
-  .filters {
-    padding: 15px;
-    margin: 10px;
-  }
-
-  .filter-btn {
-    width: 100%;
-    margin-top: 15px;
-  }
-
-  .property-info {
-    padding: 20px;
-  }
-
-  .floating-filter-btn {
-    bottom: 45px;
-    right: 10px;
-  }
-
-  .filters .row > div {
-    flex: 0 0 100%;
-    max-width: 100%;
-  }
-
-  .city-suggestions {
-    max-width: 100%;
-  }
-
-  .alert {
-    top: 50px;
-    right: 10px;
-    padding: 0.5rem 1rem;
-    font-size: 0.8rem;
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-::-webkit-scrollbar {
-  width: 5px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--light-bg);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--medium-gray);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-red);
 }
 </style>

@@ -17,15 +17,13 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="email" class="form-label">E-mail</label>
-                                    <input v-model="userNow.email" type="email" id="email" class="form-control" required />
+                                    <input v-model="userNow.email" type="email" id="email" class="form-control"
+                                        required />
                                 </div>
                                 <div class="mb-3">
                                     <label for="phone" class="form-label">Telefone</label>
-                                    <input v-model="userNow.phone" type="number" id="phone" class="form-control" required />
-                                </div>
-                                <div class="mb-3">
-                                    <label for="about" class="form-label">Sobre</label>
-                                    <textarea v-model="userNow.about" id="about" class="form-control" rows="4"></textarea>
+                                    <input v-model="userNow.phone" type="number" id="phone" class="form-control"
+                                        required />
                                 </div>
                                 <button type="submit" class="btn btn-primary w-100">Salvar Alterações</button>
                             </form>
@@ -39,19 +37,23 @@
 
                             <div class="mb-3">
                                 <label class="form-label d-block">Mudar Senha</label>
-                                <div class="row g-2">
-                                    <div class="col">
-                                        <input type="password" class="form-control" placeholder="Senha Atual" />
+
+                                <form @submit.prevent="saveProfile">
+                                    <div class="row g-2">
+
+                                        <div class="col">
+                                            <input type="password" class="form-control" placeholder="Nova Senha"
+                                                v-model="userNow.newPassword" />
+                                        </div>
+                                        <div class="col">
+                                            <input type="password" class="form-control"
+                                                placeholder="Confirmar Nova Senha"
+                                                v-model="userNow.confirmNewPassword" />
+                                        </div>
                                     </div>
-                                    <div class="col">
-                                        <input type="password" class="form-control" placeholder="Nova Senha" />
-                                    </div>
-                                    <div class="col">
-                                        <input type="password" class="form-control" placeholder="Confirmar Nova Senha" />
-                                    </div>
-                                </div>
-                                <button class="btn btn-primary w-100 mt-2">Alterar Senha</button>
-                            </div> 
+                                    <button class="btn btn-primary w-100 mt-2">Salvar </button>
+                                </form>
+                            </div>
 
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="emailNotifications" checked />
@@ -63,15 +65,6 @@
                                 <label class="form-check-label" for="smsNotifications">Notificações por SMS</label>
                             </div>
 
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="pushNotifications" />
-                                <label class="form-check-label" for="pushNotifications">Notificações por Push</label>
-                            </div>  
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="twoFactorAuth" />
-                                <label class="form-check-label" for="twoFactorAuth">Autenticação de Dois Fatores</label>
-                            </div>
 
                             <div class="mb-3">
                                 <label for="languageSelect" class="form-label">Idioma da Interface</label>
@@ -86,15 +79,16 @@
                     </div>
                 </div>
             </section>
-    <!-- Notification -->
-    <div v-if="notification.message" class="position-fixed top-0 end-0 m-3 alert alert-sm"
-        :class="notification.type === 'success' ? 'alert-success' : 'alert-info'">
-        <i :class="`fas fa-${notification.type === 'success' ? 'check-circle' : 'info-circle'} me-2`"></i>
-        {{ notification.message }}
-    </div>
-    </main>
+            <!-- Notification -->
+            <div v-if="notification.message" class="position-fixed top-0 end-0 m-3 alert alert-sm"
+                :class="notification.type === 'success' ? 'alert-success' : 'alert-info'">
+                <i :class="`fas fa-${notification.type === 'success' ? 'check-circle' : 'info-circle'} me-2`"></i>
+                {{ notification.message }}
+            </div>
+        </main>
     </div>
 </template>
+
 
 <script setup lang="ts">
 
@@ -104,7 +98,6 @@ import Chart from 'chart.js/auto';
 import NavbarDashComponent from '@/components/NavbarDashComponent.vue';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-
 
 const route = useRoute();
 const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api/v1';
@@ -117,22 +110,65 @@ interface User {
     about: string;
     createdAt?: string;
     photo?: string;
+    newPassword?: string;
+    confirmNewPassword?: string;
 }
 
 
 let userNow: User;
 if (typeof route.params.user === 'string') {
-  userNow = { id: route.params.user, name: '', phone: '', email: '', about: '', createdAt: '', photo: '' };
+    userNow = { id: route.params.user, name: '', phone: '', email: '', about: '', createdAt: '', photo: '' };
 } else if (Array.isArray(route.params.user)) {
-  userNow = { id: route.params.user[0], name: '', phone: '', email: '', about: '', createdAt: '', photo: '' };
+    userNow = { id: route.params.user[0], name: '', phone: '', email: '', about: '', createdAt: '', photo: '' };
 } else {
-  userNow = route.params.user || { id: '', name: '', phone: '', email: '', about: '', createdAt: '', photo: '' };
+    userNow = route.params.user || { id: '', name: '', phone: '', email: '', about: '', createdAt: '', photo: '' };
 }
 
 
 
 
+const saveProfile = async () => {
 
+    const formData = new FormData();
+    formData.append('name', userNow.name);
+    formData.append('email', userNow.email);
+    formData.append('phone', userNow.phone);
+
+    if (userNow.newPassword && userNow.confirmNewPassword) {
+        if (userNow.newPassword === userNow.confirmNewPassword) {
+            formData.append('currentPassword', userNow.confirmNewPassword);
+            formData.append('newPassword', userNow.newPassword);
+        } else {
+            showNotification('A nova senha e a confirmação não coincidem.', 'info');
+            return;
+        }
+    }
+
+    try {
+        const token = Cookies.get('token');
+        const response = await axios.post(
+            `${apiBase}/user/update/${userNow.id}`,
+            formData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        if (response.status === 200) {
+            userNow = { ...userNow, ...response.data };
+            // limpa form
+            userNow.newPassword = '';
+            userNow.confirmNewPassword = '';
+
+            
+            showNotification('Perfil atualizado com sucesso!', 'success');
+        }
+    } catch (error) {
+        showNotification('Erro ao atualizar perfil.', 'info');
+    }
+};
 
 interface Notification {
     message: string;
@@ -156,9 +192,7 @@ const showNotification = (message: string, type: 'success' | 'info') => {
     }, 2000);
 };
 
-const saveProfile = () => {
-    showNotification('Perfil atualizado com sucesso!', 'success');
-};
+
 
 
 onMounted(() => {
@@ -266,7 +300,7 @@ body {
 }
 
 .btn-primary:hover {
-    background-color: var(--secondary-red);
+    /* background-color: var(--secondary-red); */
     border-color: var(--secondary-red);
     transform: translateY(-2px);
 }

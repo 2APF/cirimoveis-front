@@ -357,11 +357,38 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import NavbarDashComponent from '@/components/NavbarDashComponent.vue';
 import Cookies from 'js-cookie';
 
+
+const route = useRoute();
+
 const router = useRouter();
+
+const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api/v1';
+
+interface User {
+    id?: any;
+    name: string;
+    email: string;
+    phone: string;
+    about: string;
+    createdAt?: string;
+    photo?: string;
+}
+
+
+let userNow: User;
+if (typeof route.params.user === 'string') {
+  userNow = { id: route.params.user, name: '', phone: '', email: '', about: '', createdAt: '', photo: '' };
+} else if (Array.isArray(route.params.user)) {
+  userNow = { id: route.params.user[0], name: '', phone: '', email: '', about: '', createdAt: '', photo: '' };
+} else {
+  userNow = route.params.user || { id: '', name: '', phone: '', email: '', about: '', createdAt: '', photo: '' };
+}
+
+
 
 interface PropertyForm {
   name: string;
@@ -505,7 +532,7 @@ const submitProperty = async () => {
   formData.append('bathrooms', form.value.bathrooms!.toString());
   formData.append('area', form.value.area!.toString());
   formData.append('category_id', form.value.category_id);
-  formData.append('user_id', form.value.user_id);
+  formData.append('agent_id', userNow.id);
   formData.append('status', '1');
 
   if (form.value.year_built) formData.append('year_built', form.value.year_built.toString());

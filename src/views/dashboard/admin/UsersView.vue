@@ -4,13 +4,13 @@
 
     <main class="main-content p-4 mt-5 py-7">
  
-  <!-- Cards Totais -->
+      <!-- Cards Totais -->
       <div v-if="!loadingInitial" class="card shadow-sm mb-4">
         <div class="card-body">
           <div class="row g-3 text-center">
             <div class="col-md-4">
-              <div class="bg-primary text-white rounded-3 p-3">
-                <i class="fas fa-user-shield fa-2x mb-2"></i>
+              <div class="bg-danger text-white rounded-3 p-3">
+                <i class="fas fa-users fa-2x mb-2"></i>
                 <div class="h4 mb-0">{{ stats.total }}</div>
                 <small>Total Usuários</small>
               </div>
@@ -33,22 +33,21 @@
         </div>
       </div>
 
-
       <!-- Filtros -->
       <div class="card shadow-sm mb-4">
         <div class="card-body">
           <div class="row g-3 align-items-end">
             <div class="col-md-3">
-              <label class="form-label small fw-medium">Nome/Email/Telefone</label>
+              <label class="form-label small fw-medium text-danger">Nome/Email/Telefone</label>
               <input v-model="filters.search" 
                 type="text" 
                 class="form-control" 
                 placeholder="Pesquisar usuário..."
-                @keyup.enter="() => fetchUsers()"
+                @keyup.enter="() => fetchUsers(true)"
               />
             </div>
             <div class="col-md-2">
-              <label class="form-label small fw-medium">Data Inicial</label>
+              <label class="form-label small fw-medium text-danger">Data Inicial</label>
               <input 
                 v-model="filters.date_from" 
                 type="date" 
@@ -57,7 +56,7 @@
               />
             </div>
             <div class="col-md-2">
-              <label class="form-label small fw-medium">Data Final</label>
+              <label class="form-label small fw-medium text-danger">Data Final</label>
               <input 
                 v-model="filters.date_to" 
                 type="date" 
@@ -66,7 +65,7 @@
               />
             </div>
             <div class="col-md-2">
-              <label class="form-label small fw-medium">Status</label>
+              <label class="form-label small fw-medium text-danger">Status</label>
               <select v-model="filters.status" class="form-select">
                 <option value="">Todos</option>
                 <option value="1">Ativo</option>
@@ -74,7 +73,7 @@
               </select>
             </div>
             <div class="col-md-3">
-              <button @click="() => fetchUsers()" class="btn btn-primary me-2">
+              <button @click="() => fetchUsers(true)" class="btn btn-danger me-2">
                 <i class="fas fa-search me-1"></i>Filtrar
               </button>
               <button @click="clearFilters" class="btn btn-outline-secondary">
@@ -92,9 +91,6 @@
             <table class="table table-hover mb-0">
               <thead class="table-dark">
                 <tr>
-                  <th width="50">
-                    <input type="checkbox" v-model="selectAll" @change="toggleSelectAll" />
-                  </th>
                   <th>ID</th>
                   <th>Nome</th>
                   <th>Email</th>
@@ -107,19 +103,18 @@
               </thead>
               <tbody>
                 <tr v-if="loadingInitial">
-                  <td colspan="9" class="text-center py-4">
-                    <div class="spinner-border text-primary" role="status"></div>
+                  <td colspan="8" class="text-center py-4">
+                    <div class="spinner-border text-danger"></div>
                   </td>
                 </tr>
                 <tr v-else-if="!users.length && !loadingInitial">
-                  <td colspan="9" class="text-center py-4 text-muted">
-                    <i class="fas fa-users fa-2x mb-2"></i>
+                  <td colspan="8" class="text-center py-4 text-muted">
+                    <i class="fas fa-users fa-3x mb-3"></i>
                     <div>Nenhum usuário encontrado</div>
                   </td>
                 </tr>
-                <tr v-for="user in users" :key="user.id">
-                  <td><input type="checkbox" v-model="selectedUsers" :value="user.id" /></td>
-                  <td class="fw-medium">{{ user.id }}</td>
+                <tr v-for="(user, index) in users" :key="user.id">
+                  <td class="fw-medium">{{ index + 1 }}</td>
                   <td class="fw-medium">{{ user.name }}</td>
                   <td>{{ user.email }}</td>
                   <td>{{ user.phone || 'N/A' }}</td>
@@ -136,21 +131,18 @@
                   </td>
                   <td>
                     <div class="btn-group btn-group-sm">
-                      <button class="btn btn-outline-primary" @click="viewUser(user.id)" title="Ver">
-                        <i class="fas fa-eye"></i>
-                      </button>
-                      <button class="btn btn-outline-warning" @click="editUser(user.id)" title="Editar">
+                      <button class="btn btn-outline-danger" @click="editUser(user)" title="Editar">
                         <i class="fas fa-edit"></i>
                       </button>
-                      <button class="btn btn-outline-danger" @click="confirmDelete(user.id)" title="Excluir">
+                      <button class="btn btn-outline-danger" @click="confirmDelete(user)" title="Excluir">
                         <i class="fas fa-trash"></i>
                       </button>
                     </div>
                   </td>
                 </tr>
                 <tr v-if="loadingMore">
-                  <td colspan="9" class="text-center py-3">
-                    <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                  <td colspan="8" class="text-center py-3">
+                    <div class="spinner-border spinner-border-sm text-danger"></div>
                   </td>
                 </tr>
               </tbody>
@@ -158,49 +150,88 @@
           </div>
         </div>
       </div>
+    </main>
 
-      <!-- Bulk Actions -->
-      <div v-if="selectedUsers.length" class="card shadow-sm mt-3">
-        <div class="card-body py-2">
-          <div class="d-flex align-items-center gap-2">
-            <strong>{{ selectedUsers.length }} selecionado(s):</strong>
-            <button class="btn btn-outline-danger btn-sm" @click="bulkDelete">
-              <i class="fas fa-trash me-1"></i>Excluir
-            </button>
-            <button class="btn btn-outline-warning btn-sm" @click="bulkStatus(1)">
-              <i class="fas fa-check me-1"></i>Ativar
-            </button>
-            <button class="btn btn-outline-secondary btn-sm" @click="bulkStatus(0)">
-              <i class="fas fa-times me-1"></i>Inativar
-            </button>
+    <!-- Modal Editar -->
+    <div v-if="showEditModal" class="modal fade show d-block" style="background: rgba(0,0,0,0.5)" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content rounded-4">
+          <div class="modal-header bg-danger text-white rounded-top-4">
+            <h5 class="modal-title mb-0">
+              <i class="fas fa-edit me-2"></i>
+              Editar Usuário
+            </h5>
+            <button class="btn-close btn-close-white" @click="showEditModal = false"></button>
           </div>
+          <form @submit.prevent="saveUser">
+            <div class="modal-body p-4">
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <label class="form-label small fw-medium text-danger">Nome Completo *</label>
+                  <input v-model="editForm.name" type="text" class="form-control" required />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-medium text-danger">Telefone</label>
+                  <input v-model="editForm.phone" type="tel" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-medium text-danger">Email *</label>
+                  <input v-model="editForm.email" type="email" class="form-control" required />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-medium text-danger">Status</label>
+                  <select v-model="editForm.status" class="form-select">
+                    <option value="1">Ativo</option>
+                    <option value="0">Inativo</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer bg-light rounded-bottom-4">
+              <button type="button" class="btn btn-outline-secondary" @click="showEditModal = false">Cancelar</button>
+              <button type="submit" class="btn btn-danger" :disabled="saving">
+                <i v-if="saving" class="fas fa-spinner fa-spin me-2"></i>
+                Salvar Alterações
+              </button>
+            </div>
+          </form>
         </div>
       </div>
-    </main>
+    </div>
 
     <!-- Modal Delete -->
     <div v-if="showDeleteModal" class="modal fade show d-block" style="background: rgba(0,0,0,0.5)">
       <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Confirmar Exclusão</h5>
-            <button class="btn-close" @click="showDeleteModal = false"></button>
+        <div class="modal-content rounded-4">
+          <div class="modal-header bg-danger text-white rounded-top-4">
+            <h5 class="modal-title mb-0">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              Confirmar Exclusão
+            </h5>
+            <button class="btn-close btn-close-white" @click="showDeleteModal = false"></button>
           </div>
           <div class="modal-body">
-            <p>Excluir {{ deleteCount }} usuário(s)?</p>
-            <p class="text-danger small">Esta ação não pode ser desfeita.</p>
+            <p v-if="deleteCount === 1">
+              Deseja realmente excluir o usuário <strong class="text-danger">{{ deleteName }}</strong>?
+            </p>
+            <p v-else>
+              Deseja realmente excluir <strong class="text-danger">{{ deleteCount }} usuários</strong>?
+            </p>
+            <p class="text-muted small">Esta ação não pode ser desfeita.</p>
           </div>
-          <div class="modal-footer">
-            <button class="btn btn-secondary" @click="showDeleteModal = false">Cancelar</button>
-            <button class="btn btn-danger" @click="performDelete">Excluir</button>
+          <div class="modal-footer bg-light rounded-bottom-4">
+            <button class="btn btn-outline-secondary" @click="showDeleteModal = false">Cancelar</button>
+            <button class="btn btn-danger" @click="performDelete">
+              <i class="fas fa-trash me-1"></i>Excluir
+            </button>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Notificação -->
-    <div v-if="notification.message" class="position-fixed top-0 end-0 m-3 alert alert-sm z-1050"
-      :class="notification.type === 'success' ? 'alert-success' : 'alert-danger'">
+    <div v-if="notification.message" class="position-fixed top-0 end-0 m-3 alert alert-sm z-1050 shadow-lg"
+      :class="notification.type === 'success' ? 'alert-success border-success' : 'alert-danger border-danger'">
       <i :class="`fas fa-${notification.type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2`"></i>
       {{ notification.message }}
     </div>
@@ -234,12 +265,21 @@ interface Stats {
 
 const users = ref<User[]>([])
 const filters = ref({ search: '', date_from: '', date_to: '', status: '' })
-const notification = ref({ message: '', type: 'success' })
+const notification = ref({ message: '', type: 'success' as 'success' | 'danger' })
 const showDeleteModal = ref(false)
 const deleteIds = ref<number[]>([])
-const selectedUsers = ref<number[]>([])
-const selectAll = ref(false)
+const deleteNames = ref<string[]>([])
 const stats = ref<Stats>({ total: 0, active: 0, inactive: 0 })
+
+const showEditModal = ref(false)
+const saving = ref(false)
+const editForm = ref({
+  id: 0,
+  name: '',
+  email: '',
+  phone: '',
+  status: '1'
+})
 
 const loadingInitial = ref(false)
 const loadingMore = ref(false)
@@ -249,13 +289,17 @@ const observer = ref<IntersectionObserver | null>(null)
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.cirimoveis.com/api/v1'
 
-// Utils
-const getTypeBadge = (type: string) => type === '0' ? 'bg-primary' : type === '1' ? 'bg-warning' : 'bg-success'
-const getTypeLabel = (type: string) => type === '0' ? 'Admin' : type === '1' ? 'Agente' : 'Cliente'
-const formatDate = (date: string) => new Date(date).toLocaleDateString('pt-AO')
 const deleteCount = computed(() => deleteIds.value.length)
+const deleteName = computed(() => deleteNames.value[0] || '')
 
-// API
+const getTypeBadge = (type: string) => {
+  return type === '0' ? 'bg-danger' : type === '1' ? 'bg-warning text-dark' : 'bg-success'
+}
+const getTypeLabel = (type: string) => {
+  return type === '0' ? 'Admin' : type === '1' ? 'Agente' : 'Cliente'
+}
+const formatDate = (date: string) => new Date(date).toLocaleDateString('pt-AO')
+
 const apiCall = async (params: any) => {
   const token = Cookies.get('token')
   const { data } = await axios.get(`${API_URL}/users`, { 
@@ -292,7 +336,7 @@ const fetchUsers = async (reset = true) => {
     page.value++
     hasMore.value = newUsers.length === meta.per_page
 
-  } catch (error) {
+  } catch {
     showNotification('Erro ao carregar usuários', 'danger')
   } finally {
     loadingInitial.value = false
@@ -300,7 +344,6 @@ const fetchUsers = async (reset = true) => {
   }
 }
 
-// Scroll Infinito
 const loadMore = () => {
   if (hasMore.value && !loadingMore.value) {
     fetchUsers(false)
@@ -315,88 +358,94 @@ const initScroll = () => {
     { threshold: 0.1 }
   )
 
-  const sentinel = document.querySelector('.table-responsive')?.lastElementChild
-  if (sentinel && observer.value) {
-    observer.value.observe(sentinel)
-  }
+  nextTick(() => {
+    const sentinel = document.querySelector('.table-responsive')?.lastElementChild
+    if (sentinel && observer.value) {
+      observer.value.observe(sentinel)
+    }
+  })
 }
 
-// Actions
 const clearFilters = () => {
   filters.value = { search: '', date_from: '', date_to: '', status: '' }
   fetchUsers(true)
 }
 
-const toggleSelectAll = () => {
-  selectedUsers.value = selectAll.value ? users.value.map(u => u.id) : []
+const editUser = (user: User) => {
+  editForm.value = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    phone: user.phone || '',
+    status: user.status
+  }
+  showEditModal.value = true
 }
 
-const viewUser = (id: number) => router.push({ name: 'app.dash.user.view', params: { id: id.toString() } })
-const editUser = (id: number) => router.push({ name: 'app.dash.user.edit', params: { id: id.toString() } })
+const saveUser = async () => {
+  if (!editForm.value.name || !editForm.value.email) {
+    return showNotification('Nome e email são obrigatórios', 'danger')
+  }
 
-const confirmDelete = (id: number) => {
-  deleteIds.value = [id]
-  showDeleteModal.value = true
+  saving.value = true
+  try {
+    const token = Cookies.get('token')
+    const formData = new FormData()
+    formData.append('name', editForm.value.name)
+    formData.append('email', editForm.value.email)
+    formData.append('phone', editForm.value.phone || '')
+    formData.append('status', editForm.value.status)
+
+    await fetch(`${API_URL}/user/update/${editForm.value.id}`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData
+    })
+
+    showNotification('Usuário atualizado com sucesso!', 'success')
+    showEditModal.value = false
+    fetchUsers(true)
+
+  } catch {
+    showNotification('Erro ao atualizar usuário', 'danger')
+  } finally {
+    saving.value = false
+  }
 }
 
-const bulkDelete = () => {
-  deleteIds.value = [...selectedUsers.value]
+const confirmDelete = (user: User) => {
+  deleteIds.value = [user.id]
+  deleteNames.value = [user.name]
   showDeleteModal.value = true
 }
 
 const performDelete = async () => {
   try {
     const token = Cookies.get('token')
-    await fetch(`${API_URL}/users/delete`, {
+    await fetch(`${API_URL}/user/delete/${deleteIds.value[0]}`, {
       method: 'POST',
       headers: { 
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ ids: deleteIds.value })
+      }
     })
 
-    showNotification(`${deleteCount.value} excluído(s)!`, 'success')
+    showNotification(`"${deleteName.value}" excluído com sucesso!`, 'success')
     showDeleteModal.value = false
     deleteIds.value = []
-    selectedUsers.value = []
-    selectAll.value = false
+    deleteNames.value = []
     fetchUsers(true)
 
-  } catch (error) {
-    showNotification('Erro ao excluir', 'danger')
-  }
-}
-
-const bulkStatus = async (status: number) => {
-  try {
-    const token = Cookies.get('token')
-    await fetch(`${API_URL}/users/status`, {
-      method: 'POST',
-      headers: { 
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ ids: selectedUsers.value, status })
-    })
-
-    const action = status === 1 ? 'ativado(s)' : 'inativado(s)'
-    showNotification(`${selectedUsers.value.length} ${action}!`, 'success')
-    selectedUsers.value = []
-    selectAll.value = false
-    fetchUsers(true)
-
-  } catch (error) {
-    showNotification('Erro ao alterar status', 'danger')
+  } catch {
+    showNotification('Erro ao excluir usuário', 'danger')
   }
 }
 
 const showNotification = (message: string, type: 'success' | 'danger' = 'success') => {
   notification.value = { message, type }
-  setTimeout(() => notification.value.message = '', 3000)
+  setTimeout(() => notification.value.message = '', 4000)
 }
 
-// Lifecycle
 onMounted(() => {
   const token = Cookies.get('token')
   if (!token) return router.push({ name: 'auth.login' })
@@ -413,7 +462,7 @@ onUnmounted(() => {
 <style scoped>
 :root {
   --primary-red: #e63946;
-  --soft-red: rgba(230, 57, 70, 0.1);
+  --soft-red: rgba(230,57,70,0.1);
   --secondary-red: #c92c39;
   --light-bg: #f8fafc;
   --text-dark: #1a1a1a;
@@ -424,58 +473,83 @@ onUnmounted(() => {
 .main-content { margin-left: 250px; transition: margin-left 0.3s ease; }
 
 .card { 
-  background: white; 
+  background: #ffffff; 
   border: none; 
-  border-radius: 12px; 
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+  border-radius: 16px; 
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08); 
+  overflow: hidden;
 }
+.card:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12); }
+
+.table-dark { background: linear-gradient(135deg, var(--primary-red), var(--secondary-red)); }
+.table th { border-top: none; font-weight: 600; color: white; }
+.table td { vertical-align: middle; }
 
 .form-label { 
   color: var(--primary-red); 
   font-size: 0.85rem; 
-  font-weight: 500; 
+  font-weight: 600; 
+  margin-bottom: 0.5rem;
 }
-
 .form-control, .form-select { 
-  border: 1px solid var(--soft-red); 
-  border-radius: 8px; 
-  padding: 0.5rem 1rem; 
+  border: 2px solid var(--soft-red); 
+  border-radius: 10px; 
+  font-size: 0.95rem; 
+  padding: 0.75rem 1rem; 
+  background: #fafbfc;
 }
 .form-control:focus, .form-select:focus { 
   border-color: var(--primary-red); 
-  box-shadow: 0 0 0 3px var(--soft-red); 
+  box-shadow: 0 0 0 4px rgba(230, 57, 70, 0.15); 
+  background: #fff;
 }
 
-.btn-primary { 
+.btn-danger { 
+  background: var(--primary-red);
+  border: none; 
+  font-weight: 600; 
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(230, 57, 70, 0.3);
+}
+.btn-danger:hover { 
+  transform: translateY(-1px); 
+  box-shadow: 0 6px 20px rgba(230, 57, 70, 0.4);
+}
+
+.btn-outline-danger { 
+  border: 2px solid var(--primary-red); 
+  color: var(--primary-red); 
+  border-radius: 10px;
+}
+.btn-outline-danger:hover { 
   background: var(--primary-red); 
-  border-color: var(--primary-red); 
+  color: white;
 }
-.btn-primary:hover { background: var(--secondary-red); }
-
-.table { font-size: 0.9rem; }
-.table-dark { 
-  background: linear-gradient(135deg, var(--primary-red), var(--secondary-red)); 
-}
-.table th { border-top: none; font-weight: 600; color: white; }
-.table td { vertical-align: middle; }
 
 .badge { font-size: 0.75rem; padding: 0.35em 0.65em; }
 .btn-group-sm .btn { padding: 0.25rem 0.5rem; font-size: 0.75rem; }
 
 .alert { 
   z-index: 1050; 
-  animation: fadeIn 0.3s ease; 
-  border-radius: 8px; 
+  font-size: 0.9rem; 
+  padding: 1rem 1.5rem; 
+  border-radius: 10px; 
+  animation: slideInRight 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.modal-content { 
+  border-radius: 16px; 
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2); 
+  border: none;
 }
 
 @media (max-width: 768px) {
   .main-content { margin-left: 0; padding: 1rem; }
-  .row.g-3 > * { flex: 0 0 100%; max-width: 100%; }
-  .btn-group { flex-direction: column; gap: 2px; }
+  .row.g-4 > * { flex: 0 0 100%; max-width: 100%; }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(100%); }
+  to { opacity: 1; transform: translateX(0); }
 }
 </style>

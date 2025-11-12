@@ -1,25 +1,23 @@
 <template>
   <div class="min-vh-100 bg-light-custom">
-    <NavbarDashComponent title="Administradores" class="mb-7" />
+    <NavbarDashComponent title="Gestores" class="mb-7" />
 
     <main class="main-content p-4 mt-5 py-7">
-      <!-- Header com Botão Novo -->
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0 fw-bold text-dark">
-          <i class="fas fa-user-shield me-2 text-primary"></i>
-          Administradores
+          <i class="fas fa-user-shield me-2 text-danger"></i>
+          Gestores
         </h4>
-        <button @click="newAdmin" class="btn btn-primary">
+        <button @click="newAdmin" class="btn btn-danger">
           <i class="fas fa-plus me-2"></i>Novo Admin
         </button>
       </div>
 
-      <!-- Cards Totais -->
       <div v-if="!loadingInitial" class="card shadow-sm mb-4">
         <div class="card-body">
           <div class="row g-3 text-center">
             <div class="col-md-4">
-              <div class="bg-primary text-white rounded-3 p-3">
+              <div class="bg-danger text-white rounded-3 p-3">
                 <i class="fas fa-user-shield fa-2x mb-2"></i>
                 <div class="h4 mb-0">{{ stats.total }}</div>
                 <small>Total Admins</small>
@@ -43,16 +41,12 @@
         </div>
       </div>
 
-      <!-- Tabela -->
       <div class="card shadow-sm mb-4">
         <div class="card-body p-0">
           <div class="table-responsive">
             <table class="table table-hover mb-0">
               <thead class="table-dark">
                 <tr>
-                  <th width="50">
-                    <input type="checkbox" v-model="selectAll" @change="toggleSelectAll" />
-                  </th>
                   <th>ID</th>
                   <th>Foto</th>
                   <th>Nome</th>
@@ -65,19 +59,18 @@
               </thead>
               <tbody>
                 <tr v-if="loadingInitial">
-                  <td colspan="9" class="text-center py-4">
-                    <div class="spinner-border text-primary"></div>
+                  <td colspan="8" class="text-center py-4">
+                    <div class="spinner-border text-danger"></div>
                   </td>
                 </tr>
                 <tr v-else-if="!admins.length && !loadingInitial">
-                  <td colspan="9" class="text-center py-4 text-muted">
+                  <td colspan="8" class="text-center py-4 text-muted">
                     <i class="fas fa-user-shield fa-3x mb-3"></i>
-                    <div>Nenhum administrador encontrado</div>
+                    <div>Nenhum Gestor encontrado</div>
                   </td>
                 </tr>
-                <tr v-for="admin in admins" :key="admin.id">
-                  <td><input type="checkbox" v-model="selectedAdmins" :value="admin.id" /></td>
-                  <td class="fw-medium">{{ admin.id }}</td>
+                <tr v-for="(admin, index) in admins" :key="admin.id">
+                  <td class="fw-medium">{{ index + 1 }}</td>
                   <td>
                     <img 
                       v-if="admin.photo" 
@@ -95,7 +88,7 @@
                   <td class="fw-medium">{{ admin.name }}</td>
                   <td>{{ admin.email }}</td>
                   <td>{{ admin.phone || 'N/A' }}</td>
-                  <td>{{ admin.type == '0' ? 'Super Admin' : 'Admin' }}</td>
+                  <td>{{ admin.type == '0' ? 'Gestor' : 'Comercial' }}</td>
                   <td>
                     <span class="badge" :class="admin.status === '1' ? 'bg-success' : 'bg-secondary'">
                       {{ admin.status === '1' ? 'Ativo' : 'Inativo' }}
@@ -103,18 +96,18 @@
                   </td>
                   <td>
                     <div class="btn-group btn-group-sm">
-                      <button class="btn btn-outline-primary" @click="viewAdmin(admin.id)" title="Ver">
-                        <i class="fas fa-eye"></i>
+                      <button class="btn btn-outline-danger" @click="editAdmin(admin)" title="Editar">
+                        <i class="fas fa-edit"></i>
                       </button>
-                      <button class="btn btn-outline-danger" @click="confirmDelete(admin.id)" title="Excluir">
+                      <button class="btn btn-outline-danger" @click="confirmDelete(admin)" title="Excluir">
                         <i class="fas fa-trash"></i>
                       </button>
                     </div>
                   </td>
                 </tr>
                 <tr v-if="loadingMore">
-                  <td colspan="9" class="text-center py-3">
-                    <div class="spinner-border spinner-border-sm text-primary"></div>
+                  <td colspan="8" class="text-center py-3">
+                    <div class="spinner-border spinner-border-sm text-danger"></div>
                   </td>
                 </tr>
               </tbody>
@@ -122,78 +115,63 @@
           </div>
         </div>
       </div>
-
-      <!-- Bulk Actions -->
-      <div v-if="selectedAdmins.length" class="card shadow-sm">
-        <div class="card-body py-2">
-          <div class="d-flex align-items-center gap-2">
-            <strong>{{ selectedAdmins.length }} selecionado(s):</strong>
-            <button class="btn btn-outline-danger btn-sm" @click="bulkDelete">
-              <i class="fas fa-trash me-1"></i>Excluir
-            </button>
-            <button class="btn btn-outline-warning btn-sm" @click="bulkStatus(1)">
-              <i class="fas fa-check me-1"></i>Ativar
-            </button>
-            <button class="btn btn-outline-secondary btn-sm" @click="bulkStatus(0)">
-              <i class="fas fa-times me-1"></i>Inativar
-            </button>
-          </div>
-        </div>
-      </div>
     </main>
 
-    <!-- Modal NOVO Admin (Somente Cadastro) -->
     <div v-if="showForm" class="modal fade show d-block" style="background: rgba(0,0,0,0.5)" tabindex="-1">
       <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">
-              <i class="fas fa-user-shield me-2"></i>Novo Administrador
+        <div class="modal-content rounded-4">
+          <div class="modal-header text-white rounded-top-4">
+            <h5 class="modal-title mb-0 text-danger">
+              <i class="fas fa-user-shield me-2"></i>
+              {{ isEdit ? 'Editar Gestor(a)' : 'Novo(a) Gestor(a)' }}
             </h5>
-            <button class="btn-close" @click="cancelForm"></button>
+            <button class="btn-close btn-close-white" @click="cancelForm"></button>
           </div>
           <form @submit.prevent="saveAdmin">
-            <div class="modal-body">
-              <div class="row g-3">
-                <div class="col-md-12">
-                  <div class="row g-3">
-                    <div class="col-md-6">
-                      <label class="form-label fw-medium">Nome Completo *</label>
-                      <input v-model="form.name" type="text" class="form-control" required />
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label fw-medium">Telefone</label>
-                      <input v-model="form.phone" type="tel" class="form-control" />
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label fw-medium">Email *</label>
-                      <input v-model="form.email" type="email" class="form-control" required />
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label fw-medium">Tipo *</label>
-                      <select v-model="form.type" class="form-select" required>
-                        <option value="" disabled>-- Selecionar --</option>
-                        <option value="0">Super Admin</option>
-                        <option value="1">Admin</option>
-                      </select>
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label fw-medium">Senha *</label>
-                      <input v-model="form.password" type="password" class="form-control" required />
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label fw-medium">Confirmar Senha *</label>
-                      <input v-model="form.confirm_password" type="password" class="form-control" required />
-                    </div>
-                  </div>
+            <div class="modal-body p-4">
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <label class="form-label small fw-medium text-danger">Nome Completo *</label>
+                  <input v-model="form.name" type="text" class="form-control" required />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-medium text-danger">Telefone</label>
+                  <input v-model="form.phone" type="tel" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-medium text-danger">Email *</label>
+                  <input v-model="form.email" type="email" class="form-control" :disabled="isEdit" required />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-medium text-danger">Tipo *</label>
+                  <select v-model="form.type" class="form-select" required>
+                    <option value="" disabled>-- Selecionar --</option>
+                    <option value="0">Gestor</option>
+                    <option value="1">Comercial</option>
+                  </select>
+                </div>
+                <div v-if="!isEdit" class="col-md-6">
+                  <label class="form-label small fw-medium text-danger">Senha *</label>
+                  <input v-model="form.password" type="password" class="form-control" required />
+                </div>
+                <div v-if="!isEdit" class="col-md-6">
+                  <label class="form-label small fw-medium text-danger">Confirmar Senha *</label>
+                  <input v-model="form.confirm_password" type="password" class="form-control" required />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-medium text-danger">Status</label>
+                  <select v-model="form.status" class="form-select">
+                    <option value="1">Ativo</option>
+                    <option value="0">Inativo</option>
+                  </select>
                 </div>
               </div>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" @click="cancelForm">Cancelar</button>
-              <button type="submit" class="btn btn-primary">
-                <i v-if="saving" class="fas fa-spinner fa-spin me-2"></i>
-                Criar Admin
+            <div class="modal-footer bg-light rounded-bottom-4">
+              <button type="button" class="btn btn-outline-secondary" @click="cancelForm">Cancelar</button>
+              <button type="submit" class="btn btn-danger" :disabled="saving">
+                <i v-if="saving == true" class="fas fa-spinner fa-spin me-2"></i>
+                {{ isEdit ? 'Salvar Alterações' : 'Criar Gestor(a)' }}
               </button>
             </div>
           </form>
@@ -201,29 +179,37 @@
       </div>
     </div>
 
-    <!-- Modal Delete -->
     <div v-if="showDeleteModal" class="modal fade show d-block" style="background: rgba(0,0,0,0.5)">
       <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Confirmar Exclusão</h5>
-            <button class="btn-close" @click="showDeleteModal = false"></button>
+        <div class="modal-content rounded-4">
+          <div class="modal-header bg-danger text-white rounded-top-4">
+            <h5 class="modal-title mb-0">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              Confirmar Exclusão
+            </h5>
+            <button class="btn-close btn-close-white" @click="showDeleteModal = false"></button>
           </div>
           <div class="modal-body">
-            <p>Excluir {{ deleteCount }} administrador(es)?</p>
-            <p class="text-danger small">Esta ação não pode ser desfeita.</p>
+            <p v-if="deleteCount === 1">
+              Deseja realmente excluir o gestor <strong class="text-danger">{{ deleteName }}</strong>?
+            </p>
+            <p v-else>
+              Deseja realmente excluir <strong class="text-danger">{{ deleteCount }} gestores</strong>?
+            </p>
+            <p class="text-muted small">Esta ação não pode ser desfeita.</p>
           </div>
-          <div class="modal-footer">
-            <button class="btn btn-secondary" @click="showDeleteModal = false">Cancelar</button>
-            <button class="btn btn-danger" @click="performDelete">Excluir</button>
+          <div class="modal-footer bg-light rounded-bottom-4">
+            <button class="btn btn-outline-secondary" @click="showDeleteModal = false">Cancelar</button>
+            <button class="btn btn-danger" @click="performDelete">
+              <i class="fas fa-trash me-1"></i>Excluir
+            </button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Notificação -->
-    <div v-if="notification.message" class="position-fixed top-0 end-0 m-3 alert alert-sm z-1050"
-      :class="notification.type === 'success' ? 'alert-success' : 'alert-danger'">
+    <div v-if="notification.message" class="position-fixed top-0 end-0 m-3 alert alert-sm z-1050 shadow-lg"
+      :class="notification.type === 'success' ? 'alert-success border-success' : 'alert-danger border-danger'">
       <i :class="`fas fa-${notification.type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2`"></i>
       {{ notification.message }}
     </div>
@@ -247,18 +233,18 @@ interface Admin {
   photo: string | null
   status: string
   type: string
-  created_at: string
 }
 
 interface Stats { total: number; active: number; inactive: number }
 
 const admins = ref<Admin[]>([])
 const stats = ref<Stats>({ total: 0, active: 0, inactive: 0 })
-const notification = ref({ message: '', type: 'success' })
+const notification = ref<{ message: string; type: 'success' | 'danger' }>({ message: '', type: 'success' })
 
-// Form (Somente Novo)
 const showForm = ref(false)
+const isEdit = ref(false)
 const form = ref({
+  id: 0,
   name: '',
   email: '',
   phone: '',
@@ -268,25 +254,21 @@ const form = ref({
   confirm_password: ''
 })
 
-// States
 const loadingInitial = ref(false)
 const loadingMore = ref(false)
 const page = ref(1)
 const hasMore = ref(true)
 const observer = ref<IntersectionObserver | null>(null)
-const selectedAdmins = ref<number[]>([])
-const selectAll = ref(false)
 const showDeleteModal = ref(false)
 const deleteIds = ref<number[]>([])
+const deleteNames = ref<string[]>([])
 const saving = ref(false)
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.cirimoveis.com/api/v1'
 
-// Utils
-const formatDate = (date: string) => new Date(date).toLocaleDateString('pt-AO')
 const deleteCount = computed(() => deleteIds.value.length)
+const deleteName = computed(() => deleteNames.value[0] || '')
 
-// API
 const apiCall = async (params: any) => {
   const token = Cookies.get('token')
   const { data } = await axios.get(`${API_URL}/admins`, { 
@@ -311,124 +293,128 @@ const fetchAdmins = async (reset = true) => {
     if (reset) {
       admins.value = newAdmins
       stats.value = newStats
-    } 
-    // else admins.value.push(...newAdmins)
+    }
 
     page.value++
     hasMore.value = newAdmins.length === meta.per_page
 
-  } catch (error) {
-    showNotification('Erro ao carregar', 'danger')
+  } catch {
+    showNotification('Erro ao carregar gestores', 'danger')
   } finally {
     loadingInitial.value = false
     loadingMore.value = false
   }
 }
 
-// Scroll
 const loadMore = () => hasMore.value && !loadingMore.value && fetchAdmins(false)
 const initScroll = () => {
   observer.value = new IntersectionObserver(([e]) => e.isIntersecting && loadMore(), { threshold: 0.1 })
   nextTick(() => observer.value?.observe(document.querySelector('.table-responsive')!.lastElementChild!))
 }
 
-
 const newAdmin = () => {
+  isEdit.value = false
   form.value = {
-    name: '', email: '', phone: '', password: '', type: '', status: '1', confirm_password: ''
+    id: 0, name: '', email: '', phone: '', password: '', type: '', status: '1', confirm_password: ''
+  }
+  showForm.value = true
+}
+
+const editAdmin = (admin: Admin) => {
+  isEdit.value = true
+  form.value = {
+    id: admin.id,
+    name: admin.name,
+    email: admin.email,
+    phone: admin.phone || '',
+    type: admin.type,
+    password: '',
+    status: admin.status,
+    confirm_password: ''
   }
   showForm.value = true
 }
 
 const saveAdmin = async () => {
-  if (!form.value.name || !form.value.email || !form.value.password || !form.value.confirm_password) {
+  if (!form.value.name || !form.value.email || (!isEdit.value && !form.value.password)) {
     return showNotification('Preencha todos os campos obrigatórios', 'danger')
   }
 
-  if (form.value.password !== form.value.confirm_password) {
+  if (!isEdit.value && form.value.password !== form.value.confirm_password) {
     return showNotification('As senhas não coincidem', 'danger')
   }
 
   saving.value = true
   try {
     const token = Cookies.get('token')
+
+
     const formData = new FormData()
     formData.append('name', form.value.name)
     formData.append('email', form.value.email)
     formData.append('phone', form.value.phone || '')
     formData.append('type', form.value.type)
-    formData.append('password', form.value.password)
-    formData.append('confirm_password', form.value.confirm_password)
-    // if (form.value.photoFile) formData.append('photo', form.value.photoFile)
+    formData.append('status', form.value.status)
+    if (!isEdit.value) {
+      formData.append('password', form.value.password)
+      formData.append('confirm_password', form.value.confirm_password)
+    }
 
-    await fetch(`${API_URL}/admin/create`, { 
+
+    const url = isEdit.value ? `${API_URL}/admin/update/${form.value.id}` : `${API_URL}/admin/create`
+   
+
+    // console.log('Enviando dados para:', formData, method, url, form.value)
+    await fetch(url, { 
       method: 'POST', 
       headers: { Authorization: `Bearer ${token}` }, 
       body: formData
     })
 
-    showNotification('Administrador(a) criado(a) com sucesso!', 'success')
+    showNotification(isEdit.value ? 'Gestor atualizado com sucesso!' : 'Gestor criado com sucesso!', 'success')
     showForm.value = false
     fetchAdmins(true)
 
-  } catch (error) {
-    showNotification('Erro ao criar administrador(a)', 'danger')
+  } catch {
+    showNotification(isEdit.value ? 'Erro ao atualizar gestor' : 'Erro ao criar gestor', 'danger')
   } finally {
     saving.value = false
   }
 }
 
-const cancelForm = () => {
-  showForm.value = false
-}
+const cancelForm = () => showForm.value = false
 
-// Other Actions
-const toggleSelectAll = () => selectedAdmins.value = selectAll.value ? admins.value.map(a => a.id) : []
-const viewAdmin = (id: number) => router.push({ name: 'app.dash.admin.view', params: { id: id.toString() } })
-const confirmDelete = (id: number) => { deleteIds.value = [id]; showDeleteModal.value = true }
-const bulkDelete = () => { deleteIds.value = [...selectedAdmins.value]; showDeleteModal.value = true }
+const confirmDelete = (admin: Admin) => {
+  deleteIds.value = [admin.id]
+  deleteNames.value = [admin.name]
+  showDeleteModal.value = true
+}
 
 const performDelete = async () => {
   try {
     const token = Cookies.get('token')
-    await fetch(`${API_URL}/admins/delete`, {
+    await fetch(`${API_URL}/admin/delete/${deleteIds.value[0]}`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ids: deleteIds.value })
+      body: JSON.stringify({ ids: deleteIds.value[0] })
     })
-    showNotification(`${deleteCount.value} excluído(s)!`, 'success')
+    showNotification(`"${deleteNames.value.join(', ')}" excluído com sucesso!`, 'success')
     showDeleteModal.value = false
-    selectedAdmins.value = []
-    selectAll.value = false
+    deleteIds.value = []
+    deleteNames.value = []
     fetchAdmins(true)
-  } catch (error) {
-    showNotification('Erro ao excluir', 'danger')
-  }
-}
-
-const bulkStatus = async (status: number) => {
-  try {
-    const token = Cookies.get('token')
-    await fetch(`${API_URL}/admins/status`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ids: selectedAdmins.value, status })
-    })
-    showNotification(`${selectedAdmins.value.length} ${status ? 'ativado' : 'inativado'}!`, 'success')
-    selectedAdmins.value = []
-    selectAll.value = false
-    fetchAdmins(true)
-  } catch (error) {
-    showNotification('Erro ao alterar status', 'danger')
+  } catch {
+    showNotification('Erro ao excluir gestor', 'danger')
   }
 }
 
 const showNotification = (msg: string, type: 'success' | 'danger' = 'success') => {
   notification.value = { message: msg, type }
-  setTimeout(() => notification.value.message = '', 3000)
+  setTimeout(() => {
+    notification.value.message = ''
+  }, 3000)
 }
 
-// Lifecycle
 onMounted(() => {
   const token = Cookies.get('token')
   if (!token) return router.push({ name: 'auth.login' })
@@ -441,40 +427,95 @@ onUnmounted(() => observer.value?.disconnect())
 
 <style scoped>
 :root {
-  --primary-red: #e63946; --soft-red: rgba(230,57,70,0.1);
-  --secondary-red: #c92c39; --light-bg: #f8fafc;
-  --text-dark: #1a1a1a; --text-muted: #6b7280;
+  --primary-red: #e63946;
+  --soft-red: rgba(230,57,70,0.1);
+  --secondary-red: #c92c39;
+  --light-bg: #f8fafc;
+  --text-dark: #1a1a1a;
+  --text-muted: #6b7280;
 }
 
 .bg-light-custom { background-color: var(--light-bg); }
-.main-content { margin-left: 250px; transition: margin-left 0.3s; }
+.main-content { margin-left: 250px; transition: margin-left 0.3s ease; }
 
-.card { background: white; border: none; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+.card { 
+  background: #ffffff; 
+  border: none; 
+  border-radius: 16px; 
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08); 
+  overflow: hidden;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12); }
+
 .table-dark { background: linear-gradient(135deg, var(--primary-red), var(--secondary-red)); }
 .table th { border-top: none; font-weight: 600; color: white; }
 .table td { vertical-align: middle; }
 
-.form-label { color: var(--primary-red); font-size: 0.85rem; font-weight: 500; }
+.form-label { 
+  color: var(--primary-red); 
+  font-size: 0.85rem; 
+  font-weight: 600; 
+  margin-bottom: 0.5rem;
+}
 .form-control, .form-select { 
-  border: 1px solid var(--soft-red); border-radius: 8px; padding: 0.5rem 1rem; 
+  border: 2px solid var(--soft-red); 
+  border-radius: 10px; 
+  font-size: 0.95rem; 
+  padding: 0.75rem 1rem; 
+  background: #fafbfc;
 }
 .form-control:focus, .form-select:focus { 
-  border-color: var(--primary-red); box-shadow: 0 0 0 3px var(--soft-red); 
+  border-color: var(--primary-red); 
+  box-shadow: 0 0 0 4px rgba(230, 57, 70, 0.15); 
+  background: #fff;
 }
 
-.btn-primary { background: var(--primary-red); border-color: var(--primary-red); }
-.btn-primary:hover { background: var(--secondary-red); }
+.btn-danger { 
+  background: var(--primary-red);
+  border: none; 
+  font-weight: 600; 
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(230, 57, 70, 0.3);
+}
+.btn-danger:hover { 
+  transform: translateY(-1px); 
+  box-shadow: 0 6px 20px rgba(230, 57, 70, 0.4);
+}
+
+.btn-outline-danger { 
+  border: 2px solid var(--primary-red); 
+  color: var(--primary-red); 
+  border-radius: 10px;
+}
+.btn-outline-danger:hover { 
+  background: var(--primary-red); 
+  color: white;
+}
 
 .badge { font-size: 0.75rem; padding: 0.35em 0.65em; }
 .btn-group-sm .btn { padding: 0.25rem 0.5rem; font-size: 0.75rem; }
 
-.alert { z-index: 1050; animation: fadeIn 0.3s; border-radius: 8px; }
+.alert { 
+  z-index: 1050; 
+  font-size: 0.9rem; 
+  padding: 1rem 1.5rem; 
+  border-radius: 10px; 
+  animation: slideInRight 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.modal-content { 
+  border-radius: 16px; 
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2); 
+  border: none;
+}
 
 @media (max-width: 768px) {
   .main-content { margin-left: 0; padding: 1rem; }
-  .row.g-3 > * { flex: 0 0 100%; max-width: 100%; }
-  .btn-group { flex-direction: column; gap: 2px; }
+  .row.g-4 > * { flex: 0 0 100%; max-width: 100%; }
 }
 
-@keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(100%); }
+  to { opacity: 1; transform: translateX(0); }
+}
 </style>

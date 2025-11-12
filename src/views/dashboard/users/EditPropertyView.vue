@@ -7,10 +7,10 @@
         <div class="page-header">
           <div class="header-content">
             <h1 class="page-title">
-              <i class="fas fa-plus-circle me-3"></i>
-              Publicar Novo Anúncio
+              <i class="fas fa-edit me-3"></i>
+              Editar Anúncio
             </h1>
-            <p class="page-subtitle">Complete todas as informações para publicar sua casa</p>
+            <p class="page-subtitle">Atualize as informações do seu imóvel</p>
           </div>
           <RouterLink :to="{ name: 'app.user.properties' }" class="btn btn-outline-secondary">
             <i class="fas fa-arrow-left me-2"></i>
@@ -18,7 +18,7 @@
           </RouterLink>
         </div>
 
-        <form @submit.prevent="submitProperty" class="publish-form">
+        <form @submit.prevent="submitProperty" class="publish-form" v-if="property">
           <div class="publish-form-container">
             <div class="row">
               <div class="col-lg-8">
@@ -31,9 +31,9 @@
                       <div class="col-md-6">
                         <div class="form-group">
                           <label>Nome do Imóvel *</label>
-                          <input v-model="form.name" type="text" class="form-control"
-                            :class="{ 'is-invalid': errors.name }" placeholder="Ex: Casa 3 quartos no centro" />
-                          <div v-if="errors.name" class="invalid-feedback">{{ errors.name }}</div>
+                          <input v-model="form.title" type="text" class="form-control"
+                            :class="{ 'is-invalid': errors.title }" placeholder="Ex: Casa 3 quartos no centro" />
+                          <div v-if="errors.title" class="invalid-feedback">{{ errors.title }}</div>
                         </div>
                       </div>
                       <div class="col-md-6">
@@ -42,7 +42,7 @@
                           <select v-model="form.type" class="form-select" :class="{ 'is-invalid': errors.type }">
                             <option value="">Selecione...</option>
                             <option value="sale">Venda</option>
-                            <!-- <option value="rent">Aluguel</option> -->
+                            <option value="rent">Aluguel</option>
                           </select>
                           <div v-if="errors.type" class="invalid-feedback">{{ errors.type }}</div>
                         </div>
@@ -52,7 +52,7 @@
                     <div class="row">
                       <div class="col-md-6">
                         <div class="form-group">
-                          <label>Preço (Kwanza) *</label>
+                          <label>Preço (AOA) *</label>
                           <input v-model.number="form.price" type="number" class="form-control"
                             :class="{ 'is-invalid': errors.price }" placeholder="150000" />
                           <div v-if="errors.price" class="invalid-feedback">{{ errors.price }}</div>
@@ -67,7 +67,7 @@
                             <option value="">Selecione...</option>
                             <option value="1">Casa</option>
                             <option value="2">Apartamento</option>
-                            <!-- <option value="3">Terreno</option> -->
+                            <option value="3">Terreno</option>
                             <option value="4">Comercial</option>
                           </select>
                           <div v-if="errors.category_id" class="invalid-feedback">{{ errors.category_id }}</div>
@@ -98,10 +98,10 @@
 
                     <div class="form-group">
                       <label>Endereço Completo *</label>
-                      <input v-model="form.address" type="text" class="form-control"
-                        :class="{ 'is-invalid': errors.address }"
+                      <input v-model="form.location" type="text" class="form-control"
+                        :class="{ 'is-invalid': errors.location }"
                         placeholder="Rua Exemplo, 123 - Bairro, Cidade - AO" />
-                      <div v-if="errors.address" class="invalid-feedback">{{ errors.address }}</div>
+                      <div v-if="errors.location" class="invalid-feedback">{{ errors.location }}</div>
                     </div>
 
                     <div class="form-group">
@@ -146,9 +146,7 @@
                           <label>Garagem</label>
                           <div class="form-check mt-2">
                             <input class="form-check-input" type="checkbox" id="garages" v-model="form.garages">
-                            <label class="form-check-label" for="garages">
-                              Sim
-                            </label>
+                            <label class="form-check-label" for="garages">Sim</label>
                           </div>
                         </div>
                       </div>
@@ -161,9 +159,7 @@
                           <div class="form-check mt-2">
                             <input class="form-check-input" type="checkbox" id="swimming_pool"
                               v-model="form.swimming_pool">
-                            <label class="form-check-label" for="swimming_pool">
-                              Sim
-                            </label>
+                            <label class="form-check-label" for="swimming_pool">Sim</label>
                           </div>
                         </div>
                       </div>
@@ -172,9 +168,7 @@
                           <label>Jardim</label>
                           <div class="form-check mt-2">
                             <input class="form-check-input" type="checkbox" id="garden" v-model="form.garden">
-                            <label class="form-check-label" for="garden">
-                              Sim
-                            </label>
+                            <label class="form-check-label" for="garden">Sim</label>
                           </div>
                         </div>
                       </div>
@@ -184,22 +178,18 @@
                           <div class="form-check mt-2">
                             <input class="form-check-input" type="checkbox" id="air_conditioning"
                               v-model="form.air_conditioning">
-                            <label class="form-check-label" for="air_conditioning">
-                              Sim
-                            </label>
+                            <label class="form-check-label" for="air_conditioning">Sim</label>
                           </div>
                         </div>
                       </div>
-                      <!-- <div class="col-md-3">
+                      <div class="col-md-3">
                         <div class="form-group">
                           <label>Destaque</label>
                           <div class="form-check mt-2">
                             <input class="form-check-input" type="checkbox" id="featured" v-model="form.featured">
-                            <label class="form-check-label" for="featured">
-                              Sim
-                            </label>
+                            <label class="form-check-label" for="featured">Sim</label>
                           </div>
-                        </div> -->
+                        </div>
                       </div>
                     </div>
 
@@ -221,7 +211,7 @@
 
                 <div class="card mt-4">
                   <div class="card-header">
-                    <h3><i class="fas fa-images me-2"></i>Fotos (máx 5)</h3>
+                    <h3><i class="fas fa-images me-2"></i>Fotos (máx 10)</h3>
                   </div>
                   <div class="card-body">
                     <div v-if="imagePreview.length === 0" class="text-center py-5 text-muted">
@@ -233,7 +223,7 @@
                     <div v-else class="images-preview row g-3">
                       <div v-for="(image, index) in imagePreview" :key="index" class="col-md-4 col-sm-6">
                         <div class="image-item position-relative">
-                          <img :src="image" class="img-fluid rounded" />
+                          <img :src="image.url" class="img-fluid rounded" />
                           <button type="button" class="btn-remove-image" @click="removeImage(index)">
                             <i class="fas fa-times"></i>
                           </button>
@@ -246,7 +236,7 @@
                       <input ref="fileInput" type="file" multiple accept="image/jpeg,image/png,image/jpg"
                         @change="handleFiles" class="d-none" />
                       <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
-                      <p>{{ imagePreview.length }}/5 fotos selecionadas</p>
+                      <p>{{ imagePreview.length }}/10 fotos</p>
                       <small>Clique ou arraste mais fotos</small>
                     </div>
                   </div>
@@ -261,7 +251,7 @@
                     </div>
                     <div class="card-body text-center">
                       <div v-if="imagePreview[0]" class="preview-image mb-3">
-                        <img :src="imagePreview[0]" class="rounded shadow" />
+                        <img :src="imagePreview[0].url" class="rounded shadow" />
                       </div>
                       <div v-else class="preview-placeholder">
                         <i class="fas fa-image fa-3x text-muted mb-2"></i>
@@ -273,16 +263,16 @@
                           {{ formatPrice(form.price) }} AOA
                           <span v-if="form.type === 'rent'" class="price-label">/mês</span>
                         </div>
-                        <h6 class="preview-title">{{ form.name || 'Nome do imóvel' }}</h6>
+                        <h6 class="preview-title">{{ form.title || 'Nome do imóvel' }}</h6>
                         <p class="preview-location mb-3">
                           <i class="fas fa-map-marker-alt me-1"></i>
-                          {{ form.address || 'Endereço' }}
+                          {{ form.location || 'Endereço' }}
                         </p>
 
                         <div class="preview-features mb-3">
                           <div class="feature-row">
-                            <span><i class="fas fa-bed me-1"></i>{{ form.bedrooms || 0 }} qr</span>
-                            <span><i class="fas fa-bath me-1"></i>{{ form.bathrooms || 0 }} ban</span>
+                            <span><i class="fas fa-bed me-1"></i>{{ form.bedrooms || 0 }} quarto{{ form.bedrooms !== 1 ? 's' : '' }}</span>
+                            <span><i class="fas fa-bath me-1"></i>{{ form.bathrooms || 0 }} banheiro{{ form.bathrooms !== 1 ? 's' : '' }}</span>
                           </div>
                           <div class="feature-row">
                             <span><i class="fas fa-expand me-1"></i>{{ formatArea(form.area) }}</span>
@@ -300,7 +290,7 @@
 
                   <div class="card progress-card mt-4">
                     <div class="card-body">
-                      <h6>Progresso do Anúncio</h6>
+                      <h6>Progresso da Edição</h6>
                       <div class="progress-wrapper">
                         <div class="progress-item" :class="{ 'completed': isBasicInfoComplete }">
                           <i class="fas fa-info-circle"></i>
@@ -312,7 +302,7 @@
                         </div>
                         <div class="progress-item" :class="{ 'completed': imagePreview.length > 0 }">
                           <i class="fas fa-images"></i>
-                          <span>{{ imagePreview.length }}/5 Fotos</span>
+                          <span>{{ imagePreview.length }}/10 Fotos</span>
                         </div>
                       </div>
                       <div class="progress-bar mt-3">
@@ -332,18 +322,19 @@
             <button type="button" class="btn btn-secondary me-3" @click="router.back()">
               <i class="fas fa-times me-2"></i>Cancelar
             </button>
-            <button type="submit" class="btn btn-primary btn-lg">
+            <button type="submit" class="btn btn-primary btn-lg" :disabled="isSubmitting">
               <i v-show="isSubmitting" class="fas fa-spinner fa-spin me-2"></i>
-              <!-- <i v-else-show class="fas fa-check me-2"></i> -->
-              {{ isSubmitting ? 'Publicando...' : 'Publicar Anúncio' }}
+              {{ isSubmitting ? 'Salvando...' : 'Salvar Alterações' }}
             </button>
           </div>
-
-
         </form>
 
-
-
+        <div v-else class="text-center py-5">
+          <div class="spinner-border text-danger" role="status">
+            <span class="visually-hidden">Carregando...</span>
+          </div>
+          <p class="mt-3 text-muted">Carregando dados do anúncio...</p>
+        </div>
       </div>
     </section>
 
@@ -359,45 +350,28 @@ import FooterComponent from '@/components/FooterComponent.vue'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
-
-const route = useRoute();
+const route = useRoute()
 const router = useRouter()
 const API_URL = (import.meta.env.VITE_API_BASE_URL as string) || 'https://api.cirimoveis.com/api/v1'
+const propertyId = route.params.id as string
 
-
-
-interface User {
-  id?: any;
-  name: string;
-  email: string;
-  phone: string;
-  about: string;
-  createdAt?: string;
-  photo?: string;
+interface Photo {
+  url: string
+  size: number
+  extension: string
 }
-
-
-let userNow: User;
-if (typeof route.params.user === 'string') {
-  userNow = { id: route.params.user, name: '', phone: '', email: '', about: '', createdAt: '', photo: '' };
-} else if (Array.isArray(route.params.user)) {
-  userNow = { id: route.params.user[0], name: '', phone: '', email: '', about: '', createdAt: '', photo: '' };
-} else {
-  userNow = route.params.user || { id: '', name: '', phone: '', email: '', about: '', createdAt: '', photo: '' };
-}
-
 
 interface PropertyForm {
-  name: any
+  title: string
   description: string
-  price: number | any
-  address: string
-  type: string
-  bedrooms: any
-  bathrooms: any
-  area: any
+  price: number
+  location: string
+  type: 'sale' | 'rent'
+  bedrooms: number
+  bathrooms: number
+  area: number
   category_id: string
-  year_built?: any
+  year_built?: number
   condition?: string
   availability?: string
   garages: boolean
@@ -405,20 +379,20 @@ interface PropertyForm {
   garden: boolean
   air_conditioning: boolean
   featured: boolean
-
 }
 
+const property = ref<any>(null)
 const form = reactive<PropertyForm>({
-  name: '',
+  title: '',
   description: '',
-  price: 1000,
-  address: '',
-  type: '1',
+  price: 0,
+  location: '',
+  type: 'sale',
   bedrooms: 0,
   bathrooms: 0,
-  area: 1,
+  area: 0,
   category_id: '',
-  year_built: 2000,
+  year_built: undefined,
   condition: '',
   availability: '',
   garages: false,
@@ -426,37 +400,33 @@ const form = reactive<PropertyForm>({
   garden: false,
   air_conditioning: false,
   featured: false
-  
 })
 
-
-const errors = reactive({
-  name: '',
+const errors = reactive<Record<string, string>>({
+  title: '',
   type: '',
   price: '',
-  address: '',
+  location: '',
   description: '',
-  bedrooms: '',
-  bathrooms: '',
   category_id: ''
 })
 
-const imagePreview = ref<string[]>([])
+const imagePreview = ref<Photo[]>([])
 const imageFiles = ref<File[]>([])
 const isSubmitting = ref(false)
 const isDragOver = ref(false)
 const fileInput: any = ref<HTMLInputElement>()
 
 const validateForm = () => {
-  Object.keys(errors).forEach(key => (errors as any)[key] = '')
+  Object.keys(errors).forEach(key => errors[key] = '')
 
   let isValid = true
 
-  if (!form.name.trim()) {
-    errors.name = 'Nome é obrigatório'
+  if (!form.title.trim()) {
+    errors.title = 'Nome é obrigatório'
     isValid = false
-  } else if (form.name.length < 10) {
-    errors.name = 'Nome deve ter pelo menos 10 caracteres'
+  } else if (form.title.length < 10) {
+    errors.title = 'Nome deve ter pelo menos 10 caracteres'
     isValid = false
   }
 
@@ -470,8 +440,8 @@ const validateForm = () => {
     isValid = false
   }
 
-  if (!form.address.trim()) {
-    errors.address = 'Endereço é obrigatório'
+  if (!form.location.trim()) {
+    errors.location = 'Endereço é obrigatório'
     isValid = false
   }
 
@@ -485,48 +455,87 @@ const validateForm = () => {
     isValid = false
   }
 
-  if (form.bedrooms < 1) {
-    errors.bedrooms = 'Pelo menos 1 quarto'
-    isValid = false
-  }
-
-  if (form.bathrooms < 1) {
-    errors.bathrooms = 'Pelo menos 1 banheiro'
-    isValid = false
-  }
-
   return isValid
 }
 
-const submitProperty = async () => {
- // if (!validateForm()) return
+const parsePhotos = (photosString: string): Photo[] => {
+  try {
+    const cleaned = photosString.replace(/\\\//g, '/')
+    const parsed = JSON.parse(cleaned)
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
 
-  isSubmitting.value = true
-
+const loadProperty = async () => {
   try {
     const token = Cookies.get('token')
-    const userId: any = Cookies.get('user')
     if (!token) {
       router.push({ name: 'app.auth.login' })
       return
     }
 
-    console.log('user: '+ userNow)
+    const response = await axios.get(`${API_URL}/user/product/show/${propertyId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+
+    property.value = response.data.product
+
+    const p = property.value
+    Object.assign(form, {
+      title: p.name || '',
+      description: p.description || '',
+      price: p.price || 0,
+      location: p.address || '',
+      type: p.type === '1' ? 'sale' : 'rent',
+      bedrooms: p.bedrooms || 0,
+      bathrooms: p.bathrooms || 0,
+      area: p.area || 0,
+      category_id: p.category_id?.toString() || '',
+      year_built: p.year_built ? parseInt(p.year_built) : undefined,
+      condition: p.condition || '',
+      availability: p.availability?.toString() || '',
+      garages: p.garages === '1' || p.garages === 1,
+      swimming_pool: p.swimming_pool === '1' || p.swimming_pool === 1,
+      garden: p.garden === '1' || p.garden === 1,
+      air_conditioning: p.air_conditioning === '1' || p.air_conditioning === 1,
+      featured: p.featured === '1' || p.featured === 1
+    })
+
+    if (p.photos) {
+      imagePreview.value = parsePhotos(p.photos)
+    }
+  } catch (error: any) {
+    showNotification('Erro ao carregar anúncio', 'error')
+    router.push({ name: 'app.user.properties' })
+  }
+}
+
+const submitProperty = async () => {
+  if (!validateForm()) return
+
+  isSubmitting.value = true
+
+  try {
+    const token = Cookies.get('token')
+    if (!token) {
+      router.push({ name: 'app.auth.login' })
+      return
+    }
 
     const formData = new FormData()
-    formData.append('name', form.name)
+    formData.append('name', form.title)
     formData.append('description', form.description)
-    formData.append('price', form.price)
-    formData.append('address', form.address)
-    formData.append('type', '1')
-    formData.append('bedrooms', form.bedrooms)
-    formData.append('bathrooms', form.bathrooms)
-    formData.append('area', form.area)
+    formData.append('price', form.price.toString())
+    formData.append('address', form.location)
+    formData.append('type', form.type === 'sale' ? '1' : '2')
+    formData.append('bedrooms', form.bedrooms.toString())
+    formData.append('bathrooms', form.bathrooms.toString())
+    formData.append('area', form.area.toString())
     formData.append('category_id', form.category_id)
-    formData.append('user_id', userId)
-    formData.append('status', '1')
 
-    if (form.year_built) formData.append('year_built', form.year_built)
+    if (form.year_built) formData.append('year_built', form.year_built.toString())
     if (form.condition) formData.append('condition', form.condition)
     if (form.availability) formData.append('availability', form.availability)
     formData.append('garages', form.garages ? '1' : '0')
@@ -535,25 +544,24 @@ const submitProperty = async () => {
     formData.append('air_conditioning', form.air_conditioning ? '1' : '0')
     formData.append('featured', form.featured ? '1' : '0')
 
-    imageFiles.value.forEach((img, index) => {
-      formData.append(`photos[${index}]`, img)
+    imageFiles.value.forEach((file, index) => {
+      formData.append(`new_photos[${index}]`, file)
     })
 
-    const response = await axios.post(`${API_URL}/user/product/create`, formData, {
+    await axios.put(`${API_URL}/user/product/update/${propertyId}`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'multipart/form-data'
       }
     })
 
-    showNotification('Anúncio publicado com sucesso!', 'success')
-    router.push('/my-properties')
-
+    showNotification('Anúncio atualizado com sucesso!', 'success')
+    router.push({ name: 'app.user.properties' })
   } catch (error: any) {
     if (error.response?.data?.errors) {
       Object.assign(errors, error.response.data.errors)
     } else {
-      showNotification(error.response?.data?.message || 'Erro ao publicar anúncio', 'error')
+      showNotification(error.response?.data?.message || 'Erro ao atualizar anúncio', 'error')
     }
   } finally {
     isSubmitting.value = false
@@ -563,23 +571,7 @@ const submitProperty = async () => {
 const handleFiles = (event: Event) => {
   const target = event.target as HTMLInputElement
   const files = Array.from(target.files || [])
-
-  files.forEach(file => {
-    if (file.size > 5 * 1024 * 1024) {
-      showNotification('Foto muito grande (máx 5MB)', 'error')
-      return
-    }
-
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      if (e.target?.result) {
-        imagePreview.value.push(e.target.result as string)
-        imageFiles.value.push(file)
-      }
-    }
-    reader.readAsDataURL(file)
-  })
-
+  files.forEach(file => addImageFile(file))
   target.value = ''
 }
 
@@ -590,41 +582,43 @@ const onDragOver = () => {
 const onDrop = (event: DragEvent) => {
   isDragOver.value = false
   const files = Array.from(event.dataTransfer?.files || [])
-  files.forEach(handleFileDrop)
+  files.forEach(file => addImageFile(file))
 }
 
-const handleFileDrop = (file: File) => {
-  if (file.type.startsWith('image/') && file.size <= 5 * 1024 * 1024) {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      if (e.target?.result) {
-        imagePreview.value.push(e.target.result as string)
-        imageFiles.value.push(file)
-      }
-    }
-    reader.readAsDataURL(file)
+const addImageFile = (file: File) => {
+  if (!file.type.startsWith('image/')) return
+  if (file.size > 5 * 1024 * 1024) {
+    showNotification('Foto muito grande (máx 5MB)', 'error')
+    return
   }
+  if (imagePreview.value.length >= 10) {
+    showNotification('Máximo de 10 fotos', 'error')
+    return
+  }
+
+  const reader = new FileReader()
+  reader.onload = e => {
+    if (e.target?.result) {
+      imagePreview.value.push({
+        url: e.target.result as string,
+        size: file.size,
+        extension: file.name.split('.').pop() || ''
+      })
+      imageFiles.value.push(file)
+    }
+  }
+  reader.readAsDataURL(file)
 }
 
 const removeImage = (index: number) => {
   imagePreview.value.splice(index, 1)
-  imageFiles.value.splice(index, 1)
+  if (index < imageFiles.value.length) {
+    imageFiles.value.splice(index, 1)
+  }
 }
 
-const isFormValid = computed(() => {
-  return form.name.trim() &&
-    form.type &&
-    form.price && form.price > 900000 &&
-    form.address.trim() &&
-    form.description.length >= 50 &&
-    form.category_id &&
-    form.bedrooms >= 1 &&
-    form.bathrooms >= 1 &&
-    imagePreview.value.length > 0 && imagePreview.value.length <= 5
-})
-
 const isBasicInfoComplete = computed(() =>
-  form.name.trim() && form.type && form.price && form.address.trim() && form.category_id
+  form.title.trim() && form.type && form.price && form.location.trim() && form.category_id
 )
 
 const isFeaturesComplete = computed(() =>
@@ -632,21 +626,15 @@ const isFeaturesComplete = computed(() =>
 )
 
 const progressPercentage = computed(() => {
-  const total = 100
   let progress = 0
-
   if (isBasicInfoComplete.value) progress += 40
   if (isFeaturesComplete.value) progress += 30
-  progress += (imagePreview.value.length / 5) * 30
-
-  return Math.min(progress, total)
+  progress += (imagePreview.value.length / 10) * 30
+  return Math.min(progress, 100)
 })
 
-const formatPrice = (price: number | null) => {
-  return price ? new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL'
-  }).format(price).replace('R$', '') : '0'
+const formatPrice = (price: number) => {
+  return new Intl.NumberFormat('pt-AO', { minimumFractionDigits: 0 }).format(price)
 }
 
 const formatArea = (area: number) => {
@@ -665,8 +653,7 @@ const showNotification = (message: string, type: 'success' | 'error') => {
 }
 
 onMounted(() => {
-  const fileInputEl = fileInput.value
-  fileInputEl?.addEventListener('dragover', onDragOver)
+  loadProperty()
 })
 </script>
 

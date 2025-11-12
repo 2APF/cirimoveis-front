@@ -61,8 +61,15 @@ export default defineConfig({
     },
   },
   server: {
+    // proxy: {
+    //   '/api': 'https://api.cirimoveis.com/api/v1',
+    // },
     proxy: {
-      '/api': 'https://api.cirimoveis.com/api/v1',
-    },
+      '/api-storage': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api-storage/, ''),
+      }
+    }
   },
 });

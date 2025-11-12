@@ -5,7 +5,7 @@
 
     <!-- Auth Section -->
     <section class="auth-section">
-      <div class="container">
+      <div class="container mt-3">
         <div class="auth-card">
           <div class="toggle-buttons">
             <button class="toggle-btn" :class="{ active: authMode === 'login' }" @click="authMode = 'login'">
@@ -137,10 +137,10 @@
                   @click.prevent="socialLogin('google')">
                   <i class="fab fa-google me-2"></i> Google
                 </a>
-                <a href="#" class="btn social-btn facebook-btn" aria-label="Login com Facebook"
+                <!-- <a href="#" class="btn social-btn facebook-btn" aria-label="Login com Facebook"
                   @click.prevent="socialLogin('facebook')">
                   <i class="fab fa-facebook-f me-2"></i> Facebook
-                </a>
+                </a> -->
               </div>
             </div>
           </div>
@@ -154,7 +154,7 @@
       </div>
     </section>
 
-    
+
     <FooterComponent />
   </main>
 </template>
@@ -246,7 +246,7 @@ const handleLogin = async () => {
     return
   }
 
- try {
+  try {
 
     isSubmitting.value = true
 
@@ -275,7 +275,7 @@ const handleLogin = async () => {
     if (data.user.type == '0' || data.user.type == '1') {
       router.push({ name: 'app.dash.homepage' }).catch(() => { });
     } else if (data.user.type == '3') {
-      router.push({ name: 'app.user.profile' }).catch(() => { });
+      router.push({ name: 'app.user.property.create' }).catch(() => { });
     }
 
     showNotification('Autenticado com sucesso!', 'success');
@@ -346,7 +346,19 @@ const handleSignup = async () => {
 
     signupForm.value = { name: '', email: '', password: '', confirmPassword: '' };
 
-    authMode.value = 'login';
+
+
+    // console.log(data.user.name);
+    Cookies.set('token', data.access_token, { expires: loginForm.value.remember ? 7 : undefined, secure: true, sameSite: 'Strict' });
+    Cookies.set('user', JSON.stringify(data.user.id), { expires: loginForm.value.remember ? 7 : undefined, secure: true, sameSite: 'Strict' });
+    axios.defaults.headers.common['Authorization'] = `Bearer ${data.access_token}`;
+
+      router.push({ name: 'app.user.property.create' }).catch(() => { });
+  
+
+
+
+    // authMode.value = 'login';
 
   } catch (error: unknown) {
     isSubmitting.value = false;
@@ -355,9 +367,6 @@ const handleSignup = async () => {
   }
 }
 
-/* ---------------------------
-   Social Login Integration
-   --------------------------- */
 
 const socialLogin = (provider: 'google' | 'facebook') => {
   // Redireciona para o backend que invoca Socialite e redireciona pro provedor OAuth
@@ -377,7 +386,7 @@ const handleSocialLoginCallback = async (token: string) => {
 
     // Redireciona para a página principal / dashboard
     // Mantive o redirecionamento simples; altera conforme tua rota real
-    router.push({ name: 'app.home' }).catch(() => { });
+    router.push({ name: 'app.user.property.create' }).catch(() => { });
   } catch (err) {
     console.error('Erro ao processar callback social:', err);
     showNotification('Erro ao autenticar via rede social.', 'error');
@@ -409,7 +418,7 @@ onMounted(() => {
 
     // mostra mensagem de sucesso e redireciona
     showNotification('Autenticado com sucesso!', 'success')
-    router.push({ name: 'app.home' }).catch(() => { })
+    router.push({ name: 'app.user.property.create' }).catch(() => { })
   }
 })
 

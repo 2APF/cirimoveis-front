@@ -21,12 +21,8 @@
                 </div>
                 <div class="mb-3">
                   <label for="phone" class="form-label">Telefone</label>
-                  <input v-model="user.phone" type="tel" id="phone" class="form-control" required />
-                </div>
-                <div class="mb-3">
-                  <label for="bio" class="form-label">Bio</label>
-                  <textarea v-model="user.bio" id="bio" class="form-control" rows="4"></textarea>
-                </div>
+                  <input v-model="user.phone" type="number" id="phone" class="form-control" required />
+                </div> 
                 <button type="submit" class="btn btn-primary w-100">Salvar Alterações</button>
               </form>
             </div>
@@ -101,7 +97,7 @@ const activityChart = ref<HTMLCanvasElement | null>(null);
 const user = ref<User>({
   name: 'Usuário',
   email: 'user@cirimoveis.ao',
-  phone: '+244 123 456 789',
+  phone: '+244 952 321 174',
   bio: 'Apaixonado por imóveis, ajudando a conectar pessoas com suas casas ideais.',
   score: 750,
   views: 1200,
