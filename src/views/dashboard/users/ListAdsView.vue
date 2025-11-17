@@ -51,7 +51,7 @@
                             class="col-xl-4 col-lg-6 col-md-6 col-sm-12">
                             <div class="property-card card h-100">
                                 <div class="card-image-container position-relative overflow-hidden">
-                                    <img :src="property.photo" :alt="property.title" class="card-image"
+                                    <img :src="property.photo" :alt="property.name" class="card-image"
                                         @error="handleImageError" />
                                     <div class="card-status-badge" :class="getStatusClass(property.status)">
                                         {{ getStatusLabel(property.status) }}
@@ -79,16 +79,16 @@
                                 <div class="card-body d-flex flex-column">
                                     <div class="card-price mb-2">
                                         <span class="price-value">{{ 'AOA' + formatPrice(property.price) }}</span>
-                                        <span v-if="property.type === 'rent'" class="price-label">/mês</span>
+                                        <!-- <span v-if="property.type === 'rent'" class="price-label">/mês</span> -->
                                     </div>
 
-                                    <h3 class="card-title">{{ property.title }}</h3>
+                                    <h3 class="card-title">{{ property.name }}</h3>
 
                                     <div class="property-meta mb-3">
-                                        <div class="meta-item">
+                                        <!-- <div class="meta-item">
                                             <i class="fas fa-map-marker-alt me-1"></i>
-                                            {{ property.location }}
-                                        </div>
+                                            {{ property.address }}
+                                        </div> -->
                                         <div class="meta-item">
                                             <i class="fas fa-calendar me-1"></i>
                                             {{ formatDate(property.created_at) }}
@@ -117,9 +117,9 @@
                                             </span>
                                         </div>
 
-                                        <RouterLink :to="`/casa/${property.id}`" class="btn btn-outline-primary w-100">
-                                            <i class="fas fa-external-link-alt me-1"></i>Ver Anúncio
-                                        </RouterLink>
+                                       <RouterLink :to="{ name: 'app.property.detail', params: { id: property.id } }" :scroll-behavior="{ behavior: 'smooth' }" class="btn btn-outline-primary w-100">
+                      Ver Detalhes
+                    </RouterLink>
                                     </div>
                                 </div>
                             </div>
@@ -196,10 +196,10 @@ const API_URL = (import.meta.env.VITE_API_BASE_URL as string) || 'https://api.ci
 
 interface Property {
     id: number
-    title: string
+    name: string
     price: number
     type: 'sale' | 'rent'
-    status: 'active' | 'inactive' | 'pending'
+    status: '0' | '1' | '2'
     location: string
     bedrooms: number
     bathrooms: number
@@ -338,9 +338,9 @@ const toggleActive = async (property: Property) => {
             headers: { Authorization: `Bearer ${token}` }
         })
 
-        property.status = property.status === 'active' ? 'inactive' : 'active'
+        property.status = property.status === '1' ? '0' : property.status === '0' ? '1' : '2';
         showNotification(
-            property.status === 'active' ? 'Anúncio ativado!' : 'Anúncio desativado!',
+            property.status === '1' ? 'Anúncio ativado!' : 'Anúncio desativado!',
             'success'
         )
     } catch (error: any) {
@@ -415,19 +415,21 @@ const formatDate = (dateString: string) => {
 }
 
 const getStatusClass = (status: Property['status']) => {
-    return {
-        active: 'status-active',
-        inactive: 'status-inactive',
-        pending: 'status-pending'
-    }[status] || 'status-pending'
+    const statusMap: Record<string, string> = {
+        '1': 'status-active',
+        '0': 'status-inactive',
+        '2': 'status-pending'
+    };
+    return statusMap[status] || 'status-pending';
 }
 
 const getStatusLabel = (status: Property['status']) => {
-    return {
-        active: 'Ativo',
-        inactive: 'Inativo',
-        pending: 'Pendente'
-    }[status] || 'Pendente'
+    const statusMap: Record<string, string> = {
+        '1': 'Ativo',
+        '0': 'Inativo',
+        '2': 'Pendente'
+    };
+    return statusMap[status] || 'Pendente';
 }
 
 const showNotification = (message: string, type: 'success' | 'error' | 'warning' = 'success') => {
@@ -663,7 +665,6 @@ onMounted(() => {
 .card-price {
     display: flex;
     align-items: baseline;
-    gap: 4px;
     margin-bottom: 10px;
 }
 

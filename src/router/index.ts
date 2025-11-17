@@ -25,6 +25,7 @@ import AgentsView from '@/views/others/AgentsView.vue'
 import ListAdsView from '@/views/dashboard/users/ListAdsView.vue'
 import EditPropertyView from '@/views/dashboard/users/EditPropertyView.vue'
 import EditAdmPropertyView from '@/views/dashboard/admin/EditPropertyView.vue'
+import ArtistView from '@/views/others/ArtistView.vue'
 
 
 
@@ -59,9 +60,9 @@ const router = createRouter({
 
 
     {
-      path: '/agents',
-      name: 'app.agents',
-      component: AgentsView,
+      path: '/artist',
+      name: 'app.artist',
+      component: ArtistView,
       meta: {
         title: 'Seja um agente da Cirimóveis',
         description: 'Junte-se a nós e faça parte da nossa rede de agentes imobiliários',
@@ -164,7 +165,7 @@ const router = createRouter({
       name: 'app.user.properties',
       component: ListAdsView,
       meta: {
-        title: 'Dashboard - Cirimóveis',
+        title: 'Minhas Propriedades',
         description: 'Visão geral do sistema administrativo da Cirimóveis',
         keywords: 'dashboard, administração, Cirimóveis',
         requiresAuth: true
@@ -177,7 +178,7 @@ const router = createRouter({
       name: 'app.user.property.create',
       component: CreatePropertyUserView,
       meta: {
-        title: 'Dashboard - Cirimóveis',
+        title: 'Criar Propriedade',
         description: 'Visão geral do sistema administrativo da Cirimóveis',
         keywords: 'dashboard, administração, Cirimóveis',
         requiresAuth: true

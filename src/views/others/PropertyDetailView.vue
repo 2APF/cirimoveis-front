@@ -12,26 +12,25 @@
             </p>
             <div class="property-price">{{ formatPrice(property.price) }}</div>
             <div class="property-status-badge" :class="statusClass">{{ property.status }}</div>
-            <div v-if="property.verified" class="verified-badge mt-3">
+
+
+            <div v-if="property.verified" class="verified-badge mt-3 mr-5">
               <i class="fas fa-check-circle me-2"></i>Propriedade Verificada
             </div>
-<!-- 
-            <button class="btn favorite-btn mt-3"
-              :class="{ favorited: isFavorited }"
-              @click="toggleFavorite"
+
+            <button class="btn favorite-btn " :class="{ favorited: isFavorited == true ? true : false }" @click="() => toggleFavorite(property.id)"
               aria-label="Adicionar ou remover dos favoritos">
-              <i :class="isFavorited ? 'fas fa-heart' : 'far fa-heart'"></i>
-              <span class="ms-2">{{ isFavorited ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos' }}</span>
-            </button> -->
+              <i :class="isFavorited == true ? 'fas fa-heart' : 'far fa-heart'"></i>
+              <span class="ms-2">{{ isFavorited == true ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos' }}</span>
+            </button>
+
+
+
+
           </div>
           <div class="col-lg-6">
-            <Carousel
-              :items-to-show="1"
-              :wrap-around="true"
-              :autoplay="3500"
-              :transition="600"
-              class="property-carousel"
-            >
+            <Carousel :items-to-show="1" :wrap-around="true" :autoplay="3500" :transition="600"
+              class="property-carousel">
               <Slide v-for="(img, index) in property.images" :key="index">
                 <div class="carousel-image-wrapper">
                   <img :src="img" alt="Imagem da propriedade" class="img-fluid rounded-3" loading="lazy" />
@@ -47,12 +46,51 @@
       </div>
     </section>
 
+ 
+    <section class="engagement-details py-6">
+      <div class="container">
+      <h2 class="section-title">Engajamento da Propriedade</h2>
+      <div class="row text-center g-4 mt-5">
+        <div class="col-6 col-md-3">
+        <div class="engagement-card">
+          <i class="fas fa-eye fa-2x text-danger"></i>
+          <h5 class="mt-3 text-dark">Visualizações</h5>
+          <p class="mb-0">{{ property.views }}</p>
+        </div>
+        </div>
+        <div class="col-6 col-md-3">
+        <div class="engagement-card">
+          <i class="fas fa-heart fa-2x text-danger"></i>
+          <h5 class="mt-3 text-dark">Adoros</h5>
+          <p class="mb-0">{{ property.favoriteCount }}</p>
+        </div>
+        </div>
+        <div class="col-6 col-md-3">
+        <div class="engagement-card">
+          <i class="fas fa-share-alt fa-2x text-danger"></i>
+          <h5 class="mt-3 text-dark">Compartilhamentos</h5>
+          <p class="mb-0">-</p>
+        </div>
+        </div>
+        <div class="col-6 col-md-3">
+        <div class="engagement-card">
+          <i class="fas fa-comments fa-2x text-danger"></i>
+          <h5 class="mt-3 text-dark">Tempo de vista</h5>
+          <p class="mb-0">-</p>
+        </div>
+        </div>
+      </div>
+      </div>
+    </section>
+
+
+
     <section class="property-3d-view py-6">
       <div class="container">
         <h2 class="section-title">Visão 360° da Propriedade</h2>
         <p class="section-subtitle text-center mb-5">Explore a casa em uma experiência imersiva de 360°</p>
-        
-        <div class="panorama-wrapper" :class="{ visible: panoramaVisible }">
+
+        <!-- <div class="panorama-wrapper" :class="{ visible: panoramaVisible }">
           <div id="panorama" class="panorama-canvas"></div>
           
           <div v-if="!has360Image && property.images.length > 0" class="panorama-fallback">
@@ -62,7 +100,7 @@
               <p>Tour 360° não disponível</p>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <div class="virtual-tour-placeholder mt-4 text-center">
           <button class="btn btn-tour" @click="init360Tour" aria-label="Iniciar tour virtual">
@@ -87,11 +125,16 @@
           </div>
           <div class="col-md-6">
             <ul class="details-list">
-              <li><i class="fas fa-swimming-pool me-2"></i><strong>Piscina:</strong> {{ property.piscina ? 'Sim' : 'Não' }}</li>
+              <li><i class="fas fa-swimming-pool me-2"></i><strong>Piscina:</strong> {{ property.piscina ? 'Sim' : 'Não'
+                }}
+              </li>
               <li><i class="fas fa-tree me-2"></i><strong>Jardim:</strong> {{ property.jardim ? 'Sim' : 'Não' }}</li>
-              <li><i class="fas fa-snowflake me-2"></i><strong>Ar Condicionado:</strong> {{ property.arcondicionado ? 'Sim' : 'Não' }}</li>
+              <li><i class="fas fa-snowflake me-2"></i><strong>Ar Condicionado:</strong> {{ property.arcondicionado ?
+                'Sim'
+                : 'Não' }}</li>
               <li><i class="fas fa-building me-2"></i><strong>Estado:</strong> {{ property.status }}</li>
-              <li><i class="fas fa-money-bill-wave me-2"></i><strong>Preço:</strong> {{ formatPrice(property.price) }}</li>
+              <li><i class="fas fa-money-bill-wave me-2"></i><strong>Preço:</strong> {{ formatPrice(property.price) }}
+              </li>
             </ul>
           </div>
         </div>
@@ -111,7 +154,9 @@
             <div class="contact-card" :class="{ visible: contactVisible }">
               <div class="contact-info text-center">
                 <p><i class="fas fa-phone me-2"></i>Agente: +244 952 321 174</p>
-                <a :href="`https://wa.me/244123456789?text=Olá, estou interessado na propriedade ${property.title}`" class="btn btn-whatsapp mt-3" target="_blank" rel="noopener noreferrer" aria-label="Contactar via WhatsApp">
+                <a :href="`https://wa.me/244123456789?text=Olá, estou interessado na propriedade ${property.title}`"
+                  class="btn btn-whatsapp mt-3" target="_blank" rel="noopener noreferrer"
+                  aria-label="Contactar via WhatsApp">
                   <i class="fab fa-whatsapp me-2"></i> Contactar via WhatsApp
                 </a>
               </div>
@@ -124,26 +169,19 @@
     <section class="similar-properties py-6 bg-light">
       <div class="container">
         <h2 class="section-title">Propriedades Semelhantes</h2>
-        <Carousel
-          :items-to-show="itemsToShow"
-          :items-to-scroll="1"
-          :wrap-around="true"
-          :autoplay="5000"
-          :transition="600"
-          :breakpoints="carouselBreakpoints"
-          class="similar-carousel"
-        >
+        <Carousel :items-to-show="itemsToShow" :items-to-scroll="1" :wrap-around="true" :autoplay="5000"
+          :transition="600" :breakpoints="carouselBreakpoints" class="similar-carousel">
           <Slide v-for="similar in similarProperties" :key="similar.id">
             <div class="property-card highlight-card" @click="goToDetail(similar.id)">
               <div class="property-image highlight-img" :style="{ backgroundImage: `url(${similar.image})` }">
-                <button
+                <!-- <button
                   class="favorite-btn"
                   :class="{ favorited: favorites.includes(similar.id) }"
                   @click.stop="toggleFavorite(similar.id)"
                   :aria-label="favorites.includes(similar.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'"
                 >
                   <i :class="favorites.includes(similar.id) ? 'fas fa-heart' : 'far fa-heart'"></i>
-                </button>
+                </button> -->
                 <div v-if="similar.views >= 100" class="views-badge">
                   <i class="fas fa-fire text-white me-1"></i> Muito Vista
                 </div>
@@ -227,6 +265,9 @@ interface Property {
   jardim: boolean;
   arcondicionado: boolean;
   views: number;
+
+  favoriteCount: number;
+  favoriteCheck: boolean;
 }
 
 interface Notification {
@@ -237,7 +278,7 @@ interface Notification {
 const property = ref<Property>({
   id: 0, title: '', location: '', price: 0, image: '', images: [],
   bedrooms: 0, bathrooms: 0, area: '', status: '', verified: false,
-  description: '', type: '', garage: false, piscina: false, jardim: false, arcondicionado: false, views: 0
+  description: '', type: '', garage: false, piscina: false, jardim: false, arcondicionado: false, views: 0, favoriteCount: 0, favoriteCheck: false
 });
 
 const similarProperties = ref<Property[]>([]);
@@ -256,7 +297,8 @@ const carouselBreakpoints = ref({
 
 let panoramaViewer: any = null;
 
-const isFavorited = computed(() => favorites.value.includes(property.value.id));
+// a partir de favoriteCheck
+const isFavorited = computed(() => property.value.favoriteCheck);
 
 const statusClass = computed(() => ({
   'status-pronta': property.value.status === 'Pronta para Morar',
@@ -278,18 +320,59 @@ const formatPrice = (price: number) => {
   return new Intl.NumberFormat('pt-AO', { minimumFractionDigits: 0 }).format(price) + ' AOA';
 };
 
-const toggleFavorite = (id?: number) => {
+
+
+const toggleFavorite = async (id?: number) => {
   const propertyId = id ?? property.value.id;
+  const userId = Cookies.get('user');
   const index = favorites.value.indexOf(propertyId);
-  if (index > -1) {
-    favorites.value.splice(index, 1);
-    showNotification('Removido dos favoritos', 'info');
-  } else {
-    favorites.value.push(propertyId);
-    showNotification('Adicionado aos favoritos', 'success');
+  const isFavoriting = index === -1;
+
+  try {
+    const token = Cookies.get('token');
+    const res = await axios.post(
+      `${API_URL}/product/favorite-product`,
+      { product_id: propertyId, user_id: userId, status: isFavoriting ? 1 : 0 },
+      // { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+    );
+
+    if (isFavoriting) {
+      favorites.value.push(propertyId);
+      property.value.favoriteCheck = isFavoriting ? true : false;
+      property.value.favoriteCount += 1;
+      showNotification('Adicionado aos favoritos', 'success');
+    } else {
+      
+      property.value.favoriteCheck = isFavoriting ? true : false;
+      property.value.favoriteCount -= 1;
+      favorites.value.splice(index, 1);
+      showNotification('Removido dos favoritos', 'info');
+    }
+    localStorage.setItem('favorites', JSON.stringify(favorites.value));
+  } catch (error) {
+    // console.error('Erro ao atualizar favoritos:', error);
+    // save user to login redirect
+    localStorage.setItem('redirectAfterLogin', router.currentRoute.value.fullPath);
+
+    router.push({ name: 'app.auth.login' });
+    showNotification('Erro ao atualizar favoritos', 'info');
   }
-  localStorage.setItem('favorites', JSON.stringify(favorites.value));
 };
+
+
+// const toggleFavorite = (id?: number) => {
+//   const propertyId = id ?? property.value.id;
+//   const index = favorites.value.indexOf(propertyId);
+//   if (index > -1) {
+//     favorites.value.splice(index, 1);
+//     showNotification('Removido dos favoritos', 'info');
+//   } else {
+//     favorites.value.push(propertyId);
+//     showNotification('Adicionado aos favoritos', 'success');
+//   }
+//   localStorage.setItem('favorites', JSON.stringify(favorites.value));
+// };
+
 
 const showNotification = (message: string, type: 'success' | 'info') => {
   notification.value = { message, type };
@@ -330,6 +413,10 @@ const loadProperty = async () => {
       headers: token ? { Authorization: `Bearer ${token}` } : {}
     });
     const data = response.data.product;
+    const favorite = response.data;
+
+    // console.log('oo:', response.data)
+
     const photos = parsePhotos(data.photos);
     property.value = {
       id: data.id,
@@ -341,7 +428,7 @@ const loadProperty = async () => {
       bedrooms: data.bedrooms,
       bathrooms: data.bathrooms,
       area: data.area,
-      status: data.condition === '0' ? 'Novo' : data.condition == '1' ? 'Usado' : 'Reformado',
+      status: data.condition === '0' ? 'Novo(a)' : data.condition == '1' ? 'Antigo(a)' : 'Reformado(a)',
       verified: data.verified === '1' || data.verified === 1,
       description: data.description,
       type: data.type === '1' ? 'Venda' : 'Aluguel',
@@ -349,7 +436,9 @@ const loadProperty = async () => {
       piscina: data.swimming_pool === '1',
       jardim: data.garden === '1',
       arcondicionado: data.air_conditioning === '1',
-      views: data.views || 0
+      views: data.views || 0,
+      favoriteCount: favorite.favoriteCount || 0,
+      favoriteCheck: favorite.favoriteCheck 
     };
   } catch (error) {
     console.error('Erro ao carregar propriedade:', error);
@@ -466,13 +555,19 @@ onMounted(async () => {
 .property-hero::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80') center/cover;
   opacity: 0.08;
   z-index: 0;
 }
 
-.property-hero .container { position: relative; z-index: 1; }
+.property-hero .container {
+  position: relative;
+  z-index: 1;
+}
 
 .property-title {
   font-size: 3.4rem;
@@ -513,6 +608,7 @@ onMounted(async () => {
   font-size: 1.05rem;
   color: var(--primary-red);
   font-weight: 600;
+
   background: var(--soft-red);
   padding: 10px 20px;
   border-radius: 25px;
@@ -523,21 +619,22 @@ onMounted(async () => {
   background: white;
   border: 2.5px solid var(--primary-red);
   border-radius: 60px;
-  padding: 16px 36px;
+  padding: 10px 20px;
+  margin-left: 20px;
   display: inline-flex;
   align-items: center;
   font-weight: 700;
   font-size: 1.1rem;
   color: var(--primary-red);
   transition: all 0.4s cubic-bezier(0.34, 0.69, 0.36, 0.98);
-  box-shadow: 0 8px 25px rgba(211,47,47,0.18);
+  box-shadow: 0 8px 25px rgba(211, 47, 47, 0.18);
 }
 
 .favorite-btn:hover {
   background: var(--primary-red);
   color: white;
   transform: translateY(-4px) scale(1.03);
-  box-shadow: 0 16px 35px rgba(211,47,47,0.28);
+  box-shadow: 0 16px 35px rgba(211, 47, 47, 0.28);
 }
 
 .favorite-btn.favorited {
@@ -568,9 +665,18 @@ onMounted(async () => {
 
 .property-carousel :deep(.carousel__prev),
 .property-carousel :deep(.carousel__next) {
-  width: 56px; height: 56px; background: rgba(26,26,46,0.85); border-radius: 50%;
-  top: 50%; transform: translateY(-50%); color: #fff; display: flex;
-  align-items: center; justify-content: center; transition: all 0.3s; backdrop-filter: blur(8px);
+  width: 56px;
+  height: 56px;
+  background: rgba(26, 26, 46, 0.85);
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  backdrop-filter: blur(8px);
 }
 
 .property-carousel :deep(.carousel__prev:hover),
@@ -584,12 +690,17 @@ onMounted(async () => {
 }
 
 .property-carousel :deep(.carousel__pagination-button) {
-  width: 14px; height: 14px; background: var(--medium-gray); border-radius: 50%;
-  margin: 0 8px; transition: all 0.3s;
+  width: 14px;
+  height: 14px;
+  background: var(--medium-gray);
+  border-radius: 50%;
+  margin: 0 8px;
+  transition: all 0.3s;
 }
 
 .property-carousel :deep(.carousel__pagination-button--active) {
-  background: var(--primary-red); transform: scale(1.3);
+  background: var(--primary-red);
+  transform: scale(1.3);
 }
 
 .property-3d-view {
@@ -598,38 +709,60 @@ onMounted(async () => {
 }
 
 .panorama-wrapper {
-  position: relative; border-radius: 20px; overflow: hidden;
-  box-shadow: 0 12px 35px var(--shadow-medium); height: 560px;
-  opacity: 0; transform: translateY(40px); transition: all 0.7s ease;
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 12px 35px var(--shadow-medium);
+  height: 560px;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.7s ease;
 }
 
 .panorama-wrapper.visible {
-  opacity: 1; transform: translateY(0);
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .panorama-canvas {
-  width: 100% !important; height: 100% !important;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .panorama-fallback {
-  position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 20px;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 20px;
 }
 
 .panorama-fallback img {
-  width: 100%; height: 100%; object-fit: cover; filter: brightness(0.65);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.65);
 }
 
 .fallback-overlay {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  text-align: center; color: white; z-index: 2;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+  z-index: 2;
 }
 
 .fallback-overlay i {
-  font-size: 3.5rem; margin-bottom: 12px; opacity: 0.9;
+  font-size: 3.5rem;
+  margin-bottom: 12px;
+  opacity: 0.9;
 }
 
 .fallback-overlay p {
-  font-size: 1.3rem; font-weight: 600;
+  font-size: 1.3rem;
+  font-weight: 600;
 }
 
 .virtual-tour-placeholder {
@@ -637,19 +770,33 @@ onMounted(async () => {
 }
 
 .section-title {
-  font-size: 3.2rem; font-weight: 800; color: var(--dark-charcoal);
-  text-align: center; margin-bottom: 24px; position: relative;
+  font-size: 3.2rem;
+  font-weight: 800;
+  color: var(--dark-charcoal);
+  text-align: center;
+  margin-bottom: 24px;
+  position: relative;
 }
 
 .section-title::after {
-  content: ''; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%);
-  width: 80px; height: 5px; background: var(--primary-red); border-radius: 3px;
-  box-shadow: 0 3px 12px rgba(211,47,47,0.25);
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 5px;
+  background: var(--primary-red);
+  border-radius: 3px;
+  box-shadow: 0 3px 12px rgba(211, 47, 47, 0.25);
 }
 
 .section-subtitle {
-  font-size: 1.35rem; font-weight: 500; color: var(--medium-gray);
-  max-width: 900px; margin: 0 auto 40px;
+  font-size: 1.35rem;
+  font-weight: 500;
+  color: var(--medium-gray);
+  max-width: 900px;
+  margin: 0 auto 40px;
 }
 
 .property-details {
@@ -658,27 +805,39 @@ onMounted(async () => {
 }
 
 .details-list {
-  list-style: none; padding: 0;
+  list-style: none;
+  padding: 0;
 }
 
 .details-list li {
-  font-size: 1.15rem; margin-bottom: 18px; display: flex; align-items: center;
+  font-size: 1.15rem;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
 }
 
 .details-list i {
-  color: var(--primary-red); font-size: 1.3rem;
+  color: var(--primary-red);
+  font-size: 1.3rem;
 }
 
 .details-list strong {
-  margin-left: 12px; font-weight: 600; color: var(--dark-charcoal);
+  margin-left: 12px;
+  font-weight: 600;
+  color: var(--dark-charcoal);
 }
 
 .property-description h3 {
-  font-size: 1.8rem; font-weight: 700; margin-bottom: 18px; color: var(--dark-charcoal);
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+  color: var(--dark-charcoal);
 }
 
 .property-description p {
-  font-size: 1.15rem; color: var(--medium-gray); line-height: 1.9;
+  font-size: 1.15rem;
+  color: var(--medium-gray);
+  line-height: 1.9;
 }
 
 .contact-section {
@@ -687,13 +846,19 @@ onMounted(async () => {
 }
 
 .contact-card {
-  background: white; border-radius: 20px; padding: 40px;
-  box-shadow: 0 12px 35px var(--shadow-medium); border: 1px solid var(--soft-red);
-  opacity: 0; transform: translateY(40px); transition: all 0.6s ease;
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 12px 35px var(--shadow-medium);
+  border: 1px solid var(--soft-red);
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.6s ease;
 }
 
 .contact-card.visible {
-  opacity: 1; transform: translateY(0);
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .contact-card:hover {
@@ -702,7 +867,9 @@ onMounted(async () => {
 }
 
 .contact-info p {
-  font-size: 1.2rem; color: var(--medium-gray); margin-bottom: 18px;
+  font-size: 1.2rem;
+  color: var(--medium-gray);
+  margin-bottom: 18px;
 }
 
 .contact-info i {
@@ -743,14 +910,26 @@ onMounted(async () => {
 }
 
 .highlight-card .favorite-btn {
-  position: absolute; top: 18px; left: 18px; background: rgba(255,255,255,0.95);
-  border: none; border-radius: 50%; width: 44px; height: 44px;
-  display: flex; align-items: center; justify-content: center; color: var(--medium-gray);
-  transition: all 0.3s; box-shadow: 0 3px 10px rgba(0,0,0,0.15); backdrop-filter: blur(8px);
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--medium-gray);
+  transition: all 0.3s;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(8px);
 }
 
 .highlight-card .favorite-btn:hover {
-  color: var(--primary-red); transform: scale(1.12);
+  color: var(--primary-red);
+  transform: scale(1.12);
 }
 
 .highlight-card .favorite-btn.favorited {
@@ -864,14 +1043,22 @@ onMounted(async () => {
 
 .btn-tour,
 .btn-whatsapp {
-  background: var(--primary-red); color: #fff; padding: 14px 32px; border-radius: 60px;
-  font-weight: 700; border: none; transition: all 0.4s; font-size: 1.15rem;
-  box-shadow: 0 8px 25px rgba(211,47,47,0.2);
+  background: var(--primary-red);
+  color: #fff;
+  padding: 14px 32px;
+  border-radius: 60px;
+  font-weight: 700;
+  border: none;
+  transition: all 0.4s;
+  font-size: 1.15rem;
+  box-shadow: 0 8px 25px rgba(211, 47, 47, 0.2);
 }
 
 .btn-tour:hover,
 .btn-whatsapp:hover {
-  background: #b71c1c; transform: translateY(-4px); box-shadow: 0 16px 35px rgba(211,47,47,0.3);
+  background: #b71c1c;
+  transform: translateY(-4px);
+  box-shadow: 0 16px 35px rgba(211, 47, 47, 0.3);
 }
 
 .btn-whatsapp {
@@ -883,9 +1070,19 @@ onMounted(async () => {
 }
 
 .alert {
-  position: fixed; top: 90px; right: 24px; padding: 1.2rem 2.2rem; border-radius: 12px;
-  color: #fff; font-size: 1.05rem; display: flex; align-items: center; gap: 0.6rem;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.2); z-index: 9999; animation: slideIn 0.4s ease;
+  position: fixed;
+  top: 90px;
+  right: 24px;
+  padding: 1.2rem 2.2rem;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  animation: slideIn 0.4s ease;
   backdrop-filter: blur(8px);
 }
 
@@ -898,31 +1095,83 @@ onMounted(async () => {
 }
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateX(50px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @media (max-width: 992px) {
-  .property-title { font-size: 2.8rem; }
-  .property-price { font-size: 2.3rem; }
-  .carousel-image-wrapper img { height: 380px; }
+  .property-title {
+    font-size: 2.8rem;
+  }
+
+  .property-price {
+    font-size: 2.3rem;
+  }
+
+  .carousel-image-wrapper img {
+    height: 380px;
+  }
 }
 
 @media (max-width: 768px) {
-  .property-hero { padding: 80px 0 60px; }
-  .property-title { font-size: 2.4rem; }
-  .property-price { font-size: 2rem; }
-  .carousel-image-wrapper img { height: 320px; }
-  .panorama-wrapper { height: 380px; }
-  .section-title { font-size: 2.5rem; }
-  .highlight-img { height: 240px; }
+  .property-hero {
+    padding: 80px 0 60px;
+  }
+
+  .property-title {
+    font-size: 2.4rem;
+  }
+
+  .property-price {
+    font-size: 2rem;
+  }
+
+  .carousel-image-wrapper img {
+    height: 320px;
+  }
+
+  .panorama-wrapper {
+    height: 380px;
+  }
+
+  .section-title {
+    font-size: 2.5rem;
+  }
+
+  .highlight-img {
+    height: 240px;
+  }
 }
 
 @media (max-width: 576px) {
-  .property-title { font-size: 2rem; }
-  .property-price { font-size: 1.8rem; }
-  .carousel-image-wrapper img { height: 280px; }
-  .panorama-wrapper { height: 300px; }
-  .favorite-btn { padding: 12px 28px; font-size: 1rem; }
+  .property-title {
+    font-size: 2rem;
+  }
+
+  .property-price {
+    font-size: 1.8rem;
+  }
+
+  .carousel-image-wrapper img {
+    height: 280px;
+  }
+
+  .panorama-wrapper {
+    height: 300px;
+  }
+
+  .favorite-btn {
+    margin-top: 16px;
+    margin-left: 0;
+    padding: 12px 28px;
+    font-size: 1rem;
+  }
 }
 </style>

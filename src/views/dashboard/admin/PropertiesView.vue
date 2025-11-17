@@ -229,7 +229,6 @@
       </div>
     </main>
 
-    <!-- Modal Delete - suave e clean -->
     <div v-if="showDeleteModal" class="modal-backdrop" @click="showDeleteModal = false">
       <div class="modal-delete" @click.stop>
         <div class="modal-header">

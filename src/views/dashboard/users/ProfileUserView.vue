@@ -223,7 +223,7 @@
 
             <div class="col-lg-4">
               <div class="profile-sidebar">
-                <div class="profile-stats-card card">
+                <!-- <div class="profile-stats-card card">
                   <div class="card-body text-center">
                     <h3 class="stats-title">Minha Conta</h3>
                     <div class="stats-item">
@@ -248,22 +248,22 @@
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> -->
 
                 <div class="quick-actions-card card">
                   <div class="card-header">
                     <h5><i class="fas fa-bolt me-2"></i>Ações Rápidas</h5>
                   </div>
                   <div class="card-body">
-                    <RouterLink to="/meus-anuncios" class="action-item">
+                    <RouterLink :to="{ name: 'app.user.properties' }" class="action-item" >
                       <i class="fas fa-building"></i>
                       <span>Meus Anúncios</span>
                     </RouterLink>
-                    <RouterLink to="/favoritos" class="action-item">
+                    <RouterLink :to="{ name: 'app.user.favorites.properties' }" class="action-item" >
                       <i class="fas fa-heart"></i>
                       <span>Lista de Adoradas</span>
-                    </RouterLink>
-                    <RouterLink to="/anunciar" class="action-item">
+                      </RouterLink>
+                      <RouterLink :to="{ name: 'app.user.property.create' }" class="action-item" >
                       <i class="fas fa-plus"></i>
                       <span>Anunciar Casa</span>
                     </RouterLink>
@@ -271,6 +271,9 @@
                 </div>
               </div>
             </div>
+
+
+            
           </div>
         </div>
       </div>
