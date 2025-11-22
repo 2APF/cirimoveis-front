@@ -375,20 +375,22 @@ const API_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.cirimoveis.com
 
 interface Photo { file?: File; url: any }
 interface PropertyForm {
+  slug?: string;
   name: string; description: string; price: number | null; address: string; type: string;
   bedrooms: number | string; bathrooms: number | string; area: number | string; category_id: string;
   year_built: number | string; condition: string; availability: string; status: string;
   garages: boolean; swimming_pool: boolean; garden: boolean; air_conditioning: boolean; featured: boolean;
 emphasis: boolean; verification: boolean;
-  name_user?: string; phone?: string; email?: string; user_type?: string;
+  name_user?: string; phone?: string; email?: string; user_type?: string; id: any;
 }
 
 const form = reactive<PropertyForm>({
+  slug: '',
   name: '', description: '', price: null, address: '', type: '', bedrooms: '', bathrooms: '',
   area: '', category_id: '', year_built: '', condition: '', availability: '', status: '1',
   garages: false, swimming_pool: false, garden: false, air_conditioning: false, featured: false,
   emphasis: false, verification: false,
-  name_user: '', phone: '', email: '', user_type: ''
+  name_user: '', phone: '', email: '', user_type: '', id: null
 })
 
 const currentPhotos = ref<Photo[]>([])
@@ -404,7 +406,7 @@ const notification = ref({ message: '', type: 'success' as 'success' | 'danger' 
 const onDragEnter = () => dragActive.value = true
 const onDragLeave = () => dragActive.value = false
 
-const propertyId = route.params.id as string
+const propertySlug = route.params.slug as string
 
 // Carregar dados
 onMounted(async () => {
@@ -412,7 +414,7 @@ onMounted(async () => {
   if (!token) return router.push('/login')
 
   try {
-    const res = await fetch(`${API_URL}/product/show/${propertyId}`, {
+    const res = await fetch(`${API_URL}/product/show/${propertySlug}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     const data = await res.json()
@@ -420,6 +422,7 @@ onMounted(async () => {
     const user = data.user
 
     Object.assign(form, {
+      id: p.id,
       name: p.name, description: p.description, price: p.price, address: p.address,
       type: p.type, bedrooms: p.bedrooms, bathrooms: p.bathrooms,
       area: p.area, category_id: p.category_id, year_built: p.year_built, condition: p.condition,
@@ -427,6 +430,7 @@ onMounted(async () => {
       garages: !!p.garages, swimming_pool: !!p.swimming_pool, garden: !!p.garden,
       air_conditioning: !!p.air_conditioning, featured: !!p.featured, emphasis: !!p.emphasis, verification: !!p.verification,
 
+      slug: p.slug,
       name_user: user.name, phone: user.phone, email: user.email, user_type: user.user_type
     })
  
@@ -487,9 +491,11 @@ const updateProperty = async () => {
   // Envia apenas índices das fotos que ficam
   currentPhotos.value.forEach((_, i) => formData.append('keep_photos[]', String(i)))
 
+
+  const idPro = form.id
   try {
     const token = Cookies.get('token')
-    const response = await fetch(`${API_URL}/product/update/${propertyId}`, {
+    const response = await fetch(`${API_URL}/product/update/${form.id}`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
       body: formData

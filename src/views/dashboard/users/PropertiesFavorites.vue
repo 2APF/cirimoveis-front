@@ -31,7 +31,7 @@
           <p class="empty-text">
             Adicione propriedades aos favoritos para vê-las aqui!
           </p>
-          <RouterLink to="/propriedades" class="btn btn-danger btn-lg">
+          <RouterLink :to="{ name: 'app.properties' }" class="btn btn-danger btn-lg">
             Explorar Propriedades
           </RouterLink>
         </div>
@@ -77,7 +77,7 @@
                   </div>
 
                   <div class="mt-auto">
-                    <RouterLink :to="{ name: 'app.property.detail', params: { id: item.product_id } }" :scroll-behavior="{ behavior: 'smooth' }" class="btn btn-outline-primary w-100">
+                    <RouterLink :to="{ name: 'app.property.detail', params: { slug: item.slug } }" :scroll-behavior="{ behavior: 'smooth' }" class="btn btn-outline-primary w-100">
                       Ver Detalhes
                     </RouterLink>
                   </div>
@@ -133,6 +133,7 @@ const API_URL = (import.meta.env.VITE_API_BASE_URL as string) || 'https://api.ci
 
 interface Favorite {
   id: number
+  slug: string
   product_id: number
   name: string
   price: number
@@ -158,10 +159,10 @@ const loadFavorites = async () => {
     isLoading.value = true
     const token = Cookies.get('token')
     const userId = Cookies.get('user')
-    if (!token || !userId) {
-      router.push({ name: 'app.auth.login' })
-      return
-    }
+    // if (!token || !userId) {
+    //   router.push({ name: 'app.auth.login' })
+    //   return
+    // }
     const response = await axios.get(`${API_URL}/user/product/favorites`, {
       params: { user_id: userId },
       headers: { Authorization: `Bearer ${token}` }
@@ -171,6 +172,7 @@ const loadFavorites = async () => {
       const photos = parsePhotos(item.photos || '[]')
       return {
         id: item.id || 0,
+        slug: item.slug || '',
         product_id: item.product_id || item.id || 0,
         name: item.name || 'Sem título',
         price: Number(item.price) || 0,
@@ -186,7 +188,7 @@ const loadFavorites = async () => {
     })
   } catch (error: any) {
     if (error.response?.status === 401) {
-      router.push({ name: 'app.auth.login' })
+    //  router.push({ name: 'app.auth.login' })
     }
   } finally {
     isLoading.value = false

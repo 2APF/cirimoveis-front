@@ -88,7 +88,7 @@
 
         <div v-else class="row g-3">
           <div v-for="property in properties" :key="property.id" class="col-12 col-md-4 col-lg-4">
-            <div class="property-card" @click="goToDetail(property.id)">
+            <div class="property-card" @click="goToDetail(property.slug)">
               <div class="property-image" :style="{ backgroundImage: `url(${property.photo})` }">
                 <div v-if="property.views >= 1000" class="views-badge">
                   <i class="fas fa-fire text-white me-1"></i>
@@ -113,15 +113,15 @@
                 <div class="property-features">
                   <span><i class="fas fa-bed me-1"></i>{{ property.bedrooms }} Quartos</span>
                   <span><i class="fas fa-bath me-1"></i>{{ property.bathrooms }} WC</span>
-                  <span><i class="fas fa-ruler-combined me-1"></i>{{ property.area }}m²</span>
+                  <span><i class="fas fa-user me-1"></i>{{ property.availability === '0' ? 'Imediato' : property.availability === '1' ? '15 dias' : '30 dias' }}</span>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mt-3">
                   <small class="text-muted">
                     <i class="fas fa-eye me-1"></i>{{ property.views }} visualizações
                   </small>
-                  <button class="btn-visit" @click.stop="goToDetail(property.id)">
-                    <i class="fas fa-eye me-1"></i>Visitar Casa
+                  <button class="btn-visit" @click.stop="goToDetail(property.slug)">
+                    <i class="fas fa-eye me-1"></i>Ver Detalhes
                   </button>
                 </div>
               </div>
@@ -180,6 +180,7 @@ const API_URL = (import.meta.env.VITE_API_BASE_URL as string) || 'https://api.ci
 
 interface Property {
   id: number
+  slug: string
   name: string
   description: string
   price: number
@@ -327,8 +328,8 @@ const formatPrice = (price: number) => {
   return new Intl.NumberFormat('pt-AO', { minimumFractionDigits: 0 }).format(price)
 }
 
-const goToDetail = (id: number) => {
-  router.push({ name: 'app.property.detail', params: { id } })
+const goToDetail = (slug: any) => {
+  router.push({ name: 'app.property.detail', params: { slug } })
 }
 
 const scrollToFilters = () => {

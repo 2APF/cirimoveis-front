@@ -156,7 +156,7 @@
                   </div>
                   <div class="d-flex gap-2">
                     
-                    <RouterLink :to="{ name: 'app.dash.property.edit', params: { id: property.id } }" class="btn btn-outline-red flex-fill btn-sm"
+                    <RouterLink :to="{ name: 'app.dash.property.edit', params: { slug: property.slug } }" class="btn btn-outline-red flex-fill btn-sm"
                                             title="Editar">
                                             <i class="fas fa-edit"></i>
                                         </RouterLink>
@@ -202,7 +202,7 @@
                   </td>
                   <td>{{ property.views || 0 }}</td>
                   <td class="text-end">
-                    <button @click="editProperty(property.id)" class="btn btn-outline-red btn-sm me-1">
+                    <button @click="editProperty(property.slug)" class="btn btn-outline-red btn-sm me-1">
                       <i class="fas fa-edit"></i>
                     </button>
                     <button @click="confirmDelete(property)" class="btn btn-red btn-sm">
@@ -275,6 +275,7 @@ interface Property {
   views?: number
   photo: string
   emphasis: any
+  slug: string
 
   user_id: string
 }
@@ -362,8 +363,6 @@ const loadProperties = async () => {
 
     
 
-    console.log(data)
-
     const newProps = data.products.map((p: any) => ({
       ...p,
       views: p.views || 0
@@ -382,8 +381,8 @@ const loadProperties = async () => {
   }
 }
 
-const editProperty = (id: string) => {
-  location.href = `/admin/properties/edit/${id}`
+const editProperty = (slug: string) => {
+  location.href = `/admin/properties/edit/${slug}`
 }
 
 const confirmDelete = (p: Property) => {

@@ -28,17 +28,17 @@
             </RouterLink>
           </li>
           <li class="nav-item" role="none">
-            <RouterLink class="nav-link" :to="{ name: 'app.agents' }" :class="{ active: activeItem === 'agents' }"
+            <RouterLink class="nav-link" :to="{ name: 'app.we' }" :class="{ active: activeItem === 'we' }"
               @click="closeNavbar">
               <i class="fas fa-users" style="margin-right: 8px;" aria-hidden="true"></i>
-              Agentes
+              Sobre
             </RouterLink>
           </li>
           <li class="nav-item" role="none">
-            <RouterLink class="nav-link" :to="{ name: 'app.we' }" :class="{ active: activeItem === 'we' }"
+            <RouterLink class="nav-link" :to="{ name: 'app.user.property.create' }" :class="{ active: activeItem === 'property-create' }"
               @click="closeNavbar">
-              <i class="fas fa-info-circle" style="margin-right: 8px;" aria-hidden="true"></i>
-              Sobre
+              <i class="fas fa-upload" style="margin-right: 8px;" aria-hidden="true"></i>
+              Postar Casa
             </RouterLink>
           </li>
         </ul>
@@ -105,7 +105,7 @@
           <button class="btn btn-announce" @click="announceProperty" :disabled="isAnnouncing" :aria-busy="isAnnouncing"
             :aria-label="isAnnouncing ? 'Carregando...' : 'Anunciar nova casa'" v-if="!isLoggedIn">
             <!-- <i class="fas fa-plus me-2" :aria-hidden="true"></i> -->
-            <span>{{ isAnnouncing ? 'Carregando...' : 'Postar Casa' }}</span>
+            <span>{{ isAnnouncing ? 'Carregando...' : 'Acessar' }}</span>
           </button>
 
         </div>

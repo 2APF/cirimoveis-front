@@ -38,14 +38,14 @@
         </li>
 
         
-        <li class="nav-item">
+        <li class="nav-item" v-if="userNow.type == '0'">
           <RouterLink :to="{ name: 'app.dash.administrators' }" :scroll-behavior="{ behavior: 'smooth' }" class="nav-link text-white" @click.prevent="navigateTo('administrators')">
             <i class="fas fa-user-shield me-2"></i> Administradores
           </RouterLink>
         </li>
         
 
-        <li class="nav-item">
+        <li class="nav-item" v-if="userNow.type == '0'">
           <RouterLink :to="{ name: 'app.dash.reports' }" :scroll-behavior="{ behavior: 'smooth' }" class="nav-link text-white" @click.prevent="navigateTo('reports')">
             <i class="fas fa-home me-2"></i> Relatórios
           </RouterLink>
@@ -114,11 +114,40 @@ const notification = ref<Notification>({ message: '', type: 'info' });
 const viewsChart = ref<HTMLCanvasElement | null>(null);
 const topPropertiesChart = ref<HTMLCanvasElement | null>(null);
 
-const user = ref<User>({
-  name: 'Admin User',
-  email: 'admin@cirimoveis.ao',
-  phone: '+244 952 321 174',
-});
+// const user = ref<User>({
+//   name: 'Admin User',
+//   email: 'admin@cirimoveis.ao',
+//   phone: '+244 952 321 174',
+// });
+
+
+ 
+
+interface User {
+  id?: string;
+  name: string;
+  email: string;
+  phone: string;
+  status?: string;
+  type?: string;
+  createdAt?: string;
+  photo?: string;
+}
+
+
+let userNow: User;
+if (typeof route.params.user === 'string') {
+  userNow = { id: route.params.user, name: '', phone: '', email: '', status: '', type: '', createdAt: '', photo: '' };
+} else if (Array.isArray(route.params.user)) {
+  userNow = { id: route.params.user[0], name: '', phone: '', email: '', status: '', type: '', createdAt: '', photo: '' };
+} else {
+  userNow = route.params.user || { id: '', name: '', phone: '', email: '', status: '', type: '', createdAt: '', photo: '' };
+}
+
+
+console.log('User Now:', userNow);
+
+
 
 const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value;

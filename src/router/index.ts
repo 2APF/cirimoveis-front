@@ -86,7 +86,7 @@ const router = createRouter({
 
 
     {
-      path: '/property/:id',
+      path: '/property/:slug',
       name: 'app.property.detail',
       component: PropertyDetailView,
       meta: {
@@ -146,7 +146,7 @@ const router = createRouter({
         requiresAuthUser: true
       }
     },
-    
+
     {
       path: '/user/favorites/properties',
       name: 'app.user.favorites.properties',
@@ -158,7 +158,7 @@ const router = createRouter({
         requiresAuthUser: true
       }
     },
-    
+
 
     {
       path: '/my-properties',
@@ -168,7 +168,7 @@ const router = createRouter({
         title: 'Minhas Propriedades',
         description: 'Visão geral do sistema administrativo da Cirimóveis',
         keywords: 'dashboard, administração, Cirimóveis',
-        requiresAuth: true
+        requiresAuthUser: true
       }
     },
 
@@ -186,9 +186,9 @@ const router = createRouter({
     },
 
 
-    
+
     {
-      path: '/property/edit/:id',
+      path: '/property/edit/:slug',
       name: 'app.user.property.edit',
       component: EditPropertyView,
       meta: {
@@ -199,9 +199,9 @@ const router = createRouter({
       }
     },
 
- 
 
-    
+
+
     {
       path: '/reports-user',
       name: 'app.user.reports',
@@ -249,7 +249,7 @@ const router = createRouter({
       }
     },
 
-    
+
     {
       path: '/dash/properties-users',
       name: 'app.dash.properties.users',
@@ -278,7 +278,7 @@ const router = createRouter({
 
 
     {
-      path: '/dash/property/edit/:id',
+      path: '/dash/property/edit/:slug',
       name: 'app.dash.property.edit',
       component: EditAdmPropertyView,
       meta: {
@@ -329,7 +329,7 @@ const router = createRouter({
       }
     },
 
-    
+
 
     {
       path: '/dash/my-profile',
@@ -410,7 +410,7 @@ router.beforeEach(async (to, from, next) => {
 
     const token = Cookies.get('token') || null
     try {
-     
+
       const userData = JSON.parse(user || '');
       const response = await fetch(`${apiBase}/auth/request/user/${user}`, {
         headers: {
@@ -429,10 +429,11 @@ router.beforeEach(async (to, from, next) => {
         }
         return next()
       } else {
-        return next()
+        router.push({ name: 'app.auth.login' })
+
       }
-    } catch (error) { 
-      return next()
+    } catch (error) {
+      router.push({ name: 'app.auth.login' })
     }
   }
 
@@ -440,7 +441,7 @@ router.beforeEach(async (to, from, next) => {
 
 
 
-  
+
   if (to.matched.some((record) => record.meta.requiresAuthUser)) {
     if (!user) {
       return next({ name: 'app.auth.login' })
@@ -469,7 +470,7 @@ router.beforeEach(async (to, from, next) => {
       } else {
         return next({ name: 'app.auth.login' })
       }
-    } catch (error) { 
+    } catch (error) {
       return next({ name: 'app.auth.login' })
     }
   }

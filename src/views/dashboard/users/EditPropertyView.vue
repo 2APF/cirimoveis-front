@@ -353,7 +353,7 @@ import Cookies from 'js-cookie'
 const route = useRoute()
 const router = useRouter()
 const API_URL = (import.meta.env.VITE_API_BASE_URL as string) || 'https://api.cirimoveis.com/api/v1'
-const propertyId = route.params.id as string
+const propertySlug = route.params.slug as string
 
 interface Photo {
   url: string
@@ -476,7 +476,7 @@ const loadProperty = async () => {
       return
     }
 
-    const response = await axios.get(`${API_URL}/user/product/show/${propertyId}`, {
+    const response = await axios.get(`${API_URL}/user/product/show/${propertySlug}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
 
@@ -548,7 +548,7 @@ const submitProperty = async () => {
       formData.append(`new_photos[${index}]`, file)
     })
 
-    await axios.put(`${API_URL}/user/product/update/${propertyId}`, formData, {
+    await axios.put(`${API_URL}/user/product/update/${propertySlug}`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'multipart/form-data'

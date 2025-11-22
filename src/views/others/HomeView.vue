@@ -74,7 +74,7 @@
         <h2 class="section-title">Explorar Destaques</h2>
         <div class="row g-4">
           <div v-for="property in highlights" :key="property.id" class="col-lg-4 col-md-6">
-            <div class="property-card highlight-card" @click="goToDetail(property.id)">
+            <div class="property-card highlight-card" @click="goToDetail(property.slug)">
               <div class="property-image highlight-img" :style="{ backgroundImage: `url(${property.photo})` }">
                 <div v-if="property.views >= 100" class="views-badge">
                   <i class="fas fa-fire text-white me-1"></i>
@@ -85,7 +85,7 @@
                 </div>
                 <div class="price-tag">
                   {{ formatPrice(property.price) }} AOA
-                  <span v-if="property.type === '2'" class="price-suffix">/mês</span>
+                  <!-- <span v-if="property.type === '2'" class="price-suffix">/mês</span> -->
                 </div>
               </div>
               <div class="property-info p-4">
@@ -93,17 +93,17 @@
                 <p class="property-location text-muted small mb-3">
                   <i class="fas fa-map-marker-alt"></i> {{ property.address }}
                 </p>
-                <p class="text-muted small mb-3 line-clamp-2">{{ property.description }}</p>
+                <!-- <p class="text-muted small mb-3 line-clamp-2">{{ property.description }}</p> -->
                 <div class="property-features features-small mb-3">
                   <span><i class="fas fa-bed"></i> {{ property.bedrooms }}</span>
                   <span><i class="fas fa-bath"></i> {{ property.bathrooms }}</span>
-                  <span><i class="fas fa-ruler-combined"></i> {{ property.area }}m²</span>
+                  <!-- <span><i class="fas fa-ruler-combined"></i> {{ property.area }}m²</span> -->
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
                   <small class="text-muted">
                     <i class="fas fa-eye me-1"></i>{{ property.views }}
                   </small>
-                  <button class="btn-visit btn-sm" @click.stop="goToDetail(property.id)">
+                  <button class="btn-visit btn-sm" @click.stop="goToDetail(property.slug)">
                     <i class="fas fa-eye me-1"></i> Ver Detalhes
                   </button>
                 </div>
@@ -206,6 +206,7 @@ const API_URL = (import.meta.env.VITE_API_BASE_URL as string) || 'https://api.ci
 
 interface Property {
   id: number
+  slug: string
   name: string
   description: string
   price: number
@@ -235,7 +236,6 @@ const loadProperties = async () => {
 
     const data = response.data
 
-    console.log(data)
     properties.value = (data.products || []).map((p: any) => {
       const photos = parsePhotos(p.photos)
       return {
@@ -275,8 +275,8 @@ const formatPrice = (price: number) => {
 const highlightedProperty = computed(() => properties.value.find(p => p.views >= 2000) || properties.value[2] || null)
 const highlights = computed(() => properties.value.slice(0, 6).filter(p => p.id !== (highlightedProperty.value?.id || 0)))
 
-const goToDetail = (id: number) => {
-  router.push({ name: 'app.property.detail', params: { id } })
+const goToDetail = (slug: string) => {
+  router.push({ name: 'app.property.detail', params: { slug } })
 }
 
 const goToProperties = () => {

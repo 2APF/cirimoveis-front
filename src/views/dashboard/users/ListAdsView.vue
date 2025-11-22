@@ -65,7 +65,7 @@
                                             <i v-else class="fas"
                                                 :class="property.status === 'active' ? 'fa-eye-slash' : 'fa-eye'"></i>
                                         </button> -->
-                                        <RouterLink :to="{ name: 'app.user.property.edit', params: { id: property.id } }" class="btn-quick-action"
+                                        <RouterLink :to="{ name: 'app.user.property.edit', params: { slug: property.slug } }" class="btn-quick-action"
                                             title="Editar">
                                             <i class="fas fa-edit"></i>
                                         </RouterLink>
@@ -103,13 +103,13 @@
                                             <i class="fas fa-bath me-1"></i>{{ property.bathrooms }} ban
                                         </div>
                                         <div class="feature-item">
-                                            <i class="fas fa-expand me-1"></i>{{ property.area }}m²
+                                            <i class="fas fa-user me-1"></i>{{ property.availability === '0' ? 'Imediato' : property.availability === '1' ? '15 dias' : '30 dias' }}
                                         </div>
                                     </div>
 
                                     <div class="mt-auto">
                                         <div class="property-stats mb-3">
-                                            <span class="stat-item">
+                                            <span class="stat-item">  
                                                 <i class="fas fa-eye me-1"></i>{{ property.views || 0 }}
                                             </span>
                                             <span class="stat-item">
@@ -117,9 +117,9 @@
                                             </span>
                                         </div>
 
-                                       <RouterLink :to="{ name: 'app.property.detail', params: { id: property.id } }" :scroll-behavior="{ behavior: 'smooth' }" class="btn btn-outline-primary w-100">
-                      Ver Detalhes
-                    </RouterLink>
+                                       <RouterLink :to="{ name: 'app.property.detail', params: { slug: property.slug } }" :scroll-behavior="{ behavior: 'smooth' }" class="btn btn-outline-primary w-100">
+                                        Ver Detalhes
+                                        </RouterLink>
                                     </div>
                                 </div>
                             </div>
@@ -209,7 +209,9 @@ interface Property {
     created_at: string
     updated_at: string
     views?: number
+    availability: '0' | '1' | '2'
     favorites?: number
+    slug: string
 }
 
 interface Filters {

@@ -6,12 +6,12 @@
       <div class="container">
         <div class="row align-items-center g-5">
           <div class="col-lg-6">
-            <h1 class="property-title">{{ property.title }}</h1>
+            <h1 class="property-title">{{ ' '+ property.title }}</h1>
             <p class="property-location">
-              <i class="fas fa-map-marker-alt me-2"></i>{{ property.location }}
+              <i class="fas fa-map-marker-alt me-2"></i>{{ ' '+ property.location }}
             </p>
             <div class="property-price">{{ formatPrice(property.price) }}</div>
-            <div class="property-status-badge" :class="statusClass">{{ property.status }}</div>
+            <div class="property-status-badge" :class="statusClass">{{ ' '+ property.status }}</div>
 
 
             <div v-if="property.verified" class="verified-badge mt-3 mr-5">
@@ -55,14 +55,14 @@
         <div class="engagement-card">
           <i class="fas fa-eye fa-2x text-danger"></i>
           <h5 class="mt-3 text-dark">Visualizações</h5>
-          <p class="mb-0">{{ property.views }}</p>
+          <p class="mb-0">{{ ' '+ property.views }}</p>
         </div>
         </div>
         <div class="col-6 col-md-3">
         <div class="engagement-card">
           <i class="fas fa-heart fa-2x text-danger"></i>
           <h5 class="mt-3 text-dark">Adoros</h5>
-          <p class="mb-0">{{ property.favoriteCount }}</p>
+          <p class="mb-0">{{ ' '+ property.favoriteCount }}</p>
         </div>
         </div>
         <div class="col-6 col-md-3">
@@ -116,23 +116,23 @@
         <div class="row g-5">
           <div class="col-md-6">
             <ul class="details-list">
-              <li><i class="fas fa-bed me-2"></i><strong>Quartos:</strong> {{ property.bedrooms }}</li>
-              <li><i class="fas fa-bath me-2"></i><strong>Banheiros:</strong> {{ property.bathrooms }}</li>
-              <li><i class="fas fa-ruler-combined me-2"></i><strong>Área Total:</strong> {{ property.area }} m²</li>
-              <li><i class="fas fa-home me-2"></i><strong>Tipologia:</strong> -</li>
-              <li><i class="fas fa-car me-2"></i><strong>Garagem:</strong> {{ property.garage ? 'Sim' : 'Não' }}</li>
+              <li><i class="fas fa-bed me-2"></i><strong>Quartos: </strong> {{ ' '+ property.bedrooms }}</li>
+              <li><i class="fas fa-bath me-2"></i><strong>Banheiros: </strong> {{ ' '+ property.bathrooms }}</li>
+              <li><i class="fas fa-ruler-combined me-2"></i><strong>Área Total: </strong> {{ ' '+ property.area }} m²</li>
+              <li><i class="fas fa-home me-2"></i><strong>Tipologia: </strong> -</li>
+              <li><i class="fas fa-car me-2"></i><strong>Garagem: </strong> {{ ' '+ property.garage ? 'Sim' : 'Não' }}</li>
             </ul>
           </div>
           <div class="col-md-6">
             <ul class="details-list">
-              <li><i class="fas fa-swimming-pool me-2"></i><strong>Piscina:</strong> {{ property.piscina ? 'Sim' : 'Não'
+              <li><i class="fas fa-swimming-pool me-2"></i><strong>Piscina:</strong> {{ ' '+ property.piscina ? 'Sim' : 'Não'
                 }}
-              </li>
-              <li><i class="fas fa-tree me-2"></i><strong>Jardim:</strong> {{ property.jardim ? 'Sim' : 'Não' }}</li>
-              <li><i class="fas fa-snowflake me-2"></i><strong>Ar Condicionado:</strong> {{ property.arcondicionado ?
+              </li>   
+              <li><i class="fas fa-tree me-2"></i><strong>Jardim:</strong> {{ ' '+ property.jardim ? 'Sim' : 'Não' }}</li>
+              <li><i class="fas fa-snowflake me-2"></i><strong>Ar Condicionado:</strong> {{ ' '+ property.arcondicionado ?
                 'Sim'
                 : 'Não' }}</li>
-              <li><i class="fas fa-building me-2"></i><strong>Estado:</strong> {{ property.status }}</li>
+              <li><i class="fas fa-building me-2"></i><strong>Estado:</strong> {{ ' '+ property.status }}</li>
               <li><i class="fas fa-money-bill-wave me-2"></i><strong>Preço:</strong> {{ formatPrice(property.price) }}
               </li>
             </ul>
@@ -140,7 +140,7 @@
         </div>
         <div class="property-description mt-5">
           <h3>Descrição Completa</h3>
-          <p>{{ property.description }}</p>
+          <p>{{ ' '+ property.description }}</p>
         </div>
       </div>
     </section>
@@ -153,12 +153,12 @@
           <div class="col-lg-6">
             <div class="contact-card" :class="{ visible: contactVisible }">
               <div class="contact-info text-center">
-                <p><i class="fas fa-phone me-2"></i>Agente: +244 952 321 174</p>
-                <a :href="`https://wa.me/244123456789?text=Olá, estou interessado na propriedade ${property.title}`"
+                <p><i class="fas fa-phone me-2"></i><strong>Contacto:</strong> {{ property.phone_one +' | '+ property.phone_two }}</p>
+                <!-- <a :href="`https://wa.me/244123456789?text=Olá, estou interessado na propriedade ${property.title}`"
                   class="btn btn-whatsapp mt-3" target="_blank" rel="noopener noreferrer"
                   aria-label="Contactar via WhatsApp">
                   <i class="fab fa-whatsapp me-2"></i> Contactar via WhatsApp
-                </a>
+                </a> -->
               </div>
             </div>
           </div>
@@ -172,7 +172,7 @@
         <Carousel :items-to-show="itemsToShow" :items-to-scroll="1" :wrap-around="true" :autoplay="5000"
           :transition="600" :breakpoints="carouselBreakpoints" class="similar-carousel">
           <Slide v-for="similar in similarProperties" :key="similar.id">
-            <div class="property-card highlight-card" @click="goToDetail(similar.id)">
+            <div class="property-card highlight-card" @click="goToDetail(similar.slug)">
               <div class="property-image highlight-img" :style="{ backgroundImage: `url(${similar.image})` }">
                 <!-- <button
                   class="favorite-btn"
@@ -190,7 +190,7 @@
                 </div>
                 <div class="price-tag">
                   {{ formatPrice(similar.price) }} AOA
-                  <span v-if="similar.type === '2'" class="price-suffix">/mês</span>
+                  <!-- <span v-if="similar.type === '2'" class="price-suffix">/mês</span> -->
                 </div>
               </div>
               <div class="property-info p-4">
@@ -198,7 +198,7 @@
                 <p class="property-location text-muted small mb-3">
                   <i class="fas fa-map-marker-alt"></i> {{ similar.location }}
                 </p>
-                <p class="text-muted small mb-3 line-clamp-2">{{ similar.description }}</p>
+                <!-- <p class="text-muted small mb-3 line-clamp-2">{{ similar.description }}</p> -->
                 <div class="property-features features-small mb-3">
                   <span><i class="fas fa-bed"></i> {{ similar.bedrooms }}</span>
                   <span><i class="fas fa-bath"></i> {{ similar.bathrooms }}</span>
@@ -208,7 +208,7 @@
                   <small class="text-muted">
                     <i class="fas fa-eye me-1"></i>{{ similar.views }}
                   </small>
-                  <button class="btn-visit btn-sm" @click.stop="goToDetail(similar.id)">
+                  <button class="btn-visit btn-sm" @click.stop="goToDetail(similar.slug)">
                     <i class="fas fa-eye me-1"></i> Ver Detalhes
                   </button>
                 </div>
@@ -265,6 +265,9 @@ interface Property {
   jardim: boolean;
   arcondicionado: boolean;
   views: number;
+  phone_one: string;
+  phone_two: string;
+  slug: string;
 
   favoriteCount: number;
   favoriteCheck: boolean;
@@ -278,7 +281,9 @@ interface Notification {
 const property = ref<Property>({
   id: 0, title: '', location: '', price: 0, image: '', images: [],
   bedrooms: 0, bathrooms: 0, area: '', status: '', verified: false,
-  description: '', type: '', garage: false, piscina: false, jardim: false, arcondicionado: false, views: 0, favoriteCount: 0, favoriteCheck: false
+  description: '', type: '', garage: false, piscina: false, jardim: false, 
+  arcondicionado: false, views: 0, phone_one: '', phone_two: '', slug: '',
+  favoriteCount: 0, favoriteCheck: false
 });
 
 const similarProperties = ref<Property[]>([]);
@@ -307,6 +312,7 @@ const statusClass = computed(() => ({
 }));
 
 const parsePhotos = (photosString: string): string[] => {
+
   try {
     const cleaned = photosString.replace(/\\\//g, '/');
     const parsed = JSON.parse(cleaned);
@@ -314,6 +320,7 @@ const parsePhotos = (photosString: string): string[] => {
   } catch {
     return [];
   }
+
 };
 
 const formatPrice = (price: number) => {
@@ -408,8 +415,8 @@ const init360Tour = async () => {
 const loadProperty = async () => {
   try {
     const token = Cookies.get('token');
-    const id = route.params.id;
-    const response = await axios.get(`${API_URL}/product/show/${id}`, {
+    const slug = route.params.slug;
+    const response = await axios.get(`${API_URL}/product/show/${slug}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {}
     });
     const data = response.data.product;
@@ -438,7 +445,10 @@ const loadProperty = async () => {
       arcondicionado: data.air_conditioning === '1',
       views: data.views || 0,
       favoriteCount: favorite.favoriteCount || 0,
-      favoriteCheck: favorite.favoriteCheck 
+      favoriteCheck: favorite.favoriteCheck,
+      phone_one: data.phone_one || '',
+      phone_two: data.phone_two || '',
+      slug: data.slug || '',
     };
   } catch (error) {
     console.error('Erro ao carregar propriedade:', error);
@@ -468,6 +478,7 @@ const loadSimilarProperties = async () => {
           bedrooms: p.bedrooms,
           bathrooms: p.bathrooms,
           area: p.area,
+          slug: p.slug,
           status: p.condition == '0' ? 'Novo' : p.condition === '1' ? 'Usado' : 'Reformado',
           verified: p.verified === '1' || p.verified === 1,
           description: p.description || '',
@@ -484,8 +495,9 @@ const loadSimilarProperties = async () => {
   }
 };
 
-const goToDetail = (id: number) => {
-  router.push({ name: 'app.property.detail', params: { id } });
+// esta pagina e de detalhes de propriedade, quero que actualize quando for para ver outra propriedade
+const goToDetail = (slug: string) => {
+  router.push({ name: 'app.property.detail', params: { slug } });
 };
 
 onMounted(async () => {

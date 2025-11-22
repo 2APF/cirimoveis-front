@@ -87,6 +87,13 @@
                 <span v-if="errors.name" class="error-text">{{ errors.name }}</span>
               </div>
 
+              
+              <div class="input-group">
+                <input id="signup-phone" type="text" v-model="signupForm.phone" placeholder="Telefone *"
+                  class="form-control" required @input="clearError" style="width: 100%;" />
+                <span v-if="errors.phone" class="error-text">{{ errors.phone }}</span>
+              </div>
+
 
               <div class="input-group">
                 <input id="signup-email" type="email" v-model="signupForm.email" placeholder="Email *"
@@ -190,6 +197,7 @@ interface LoginForm {
 
 
 interface signupForm {
+  phone?: string;
   name: string;
   email: string;
   password: string;
@@ -205,12 +213,14 @@ const loginForm = ref<LoginForm>({
 
 
 const signupForm = ref<signupForm>({
+  phone: '',
   name: '',
   email: '',
   password: '',
   confirmPassword: '',
 })
 const errors = ref({
+  phone: '',
   name: '',
   email: '',
   password: '',
@@ -223,9 +233,11 @@ const notification = ref({
 
 // Methods
 const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+// ao passar o numero a ideia e aceitar varios tipos de ddd
+const validatePhoneNumber = (phone: string) => /^\+?\d{9,15}$/.test(phone);
 
 const clearError = () => {
-  errors.value = { name: '', email: '', password: '', confirmPassword: '' }
+  errors.value = { name: '', phone: '', email: '', password: '', confirmPassword: '' }
 }
 
 const showNotification = (message: string, type: 'success' | 'error') => {
@@ -304,6 +316,10 @@ const handleSignup = async () => {
     errors.value.name = 'O nome é obrigatório'
     return
   }
+  if (!validatePhoneNumber(signupForm.value.phone || '')) {
+    errors.value.phone = 'Por favor, insira um número de telefone válido'
+    return
+  }
   if (!validateEmail(signupForm.value.email)) {
     errors.value.email = 'Por favor, insira um email válido'
     return
@@ -330,6 +346,7 @@ const handleSignup = async () => {
       },
       body: JSON.stringify({
         name: signupForm.value.name,
+        phone: signupForm.value.phone,
         email: signupForm.value.email,
         password: signupForm.value.password,
         password_confirmation: signupForm.value.confirmPassword,
@@ -344,7 +361,7 @@ const handleSignup = async () => {
 
     showNotification('Conta criada com sucesso!', 'success');
 
-    signupForm.value = { name: '', email: '', password: '', confirmPassword: '' };
+    signupForm.value = { name: '', phone: '', email: '', password: '', confirmPassword: '' };
 
 
 
