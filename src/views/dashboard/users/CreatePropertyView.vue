@@ -422,7 +422,7 @@ const validateForm = () => {
   Object.keys(errors).forEach(k => errors[k] = '')
 
   if (!form.name.trim()) errors.name = 'Nome é obrigatório'
-  else if (form.name.length < 5) errors.name = 'Mínimo 5 caracteres'
+  else if (form.name.length < 3) errors.name = 'Mínimo 5 caracteres'
 
   if (!form.type) errors.type = 'Selecione o tipo'
 

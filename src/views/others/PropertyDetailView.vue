@@ -20,12 +20,12 @@
             <button class="btn favorite-btn " :class="{ favorited: isFavorited == true ? true : false }" @click="() => toggleFavorite(property.id)"
               aria-label="Adicionar ou remover dos favoritos">
               <i :class="isFavorited == true ? 'fas fa-heart' : 'far fa-heart'"></i>
-              <span class="ms-2">{{ isFavorited == true ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos' }}</span>
+              <span class="ms-2">{{ isFavorited == true ? 'Remover dos Favoritos' : 'Favoritar' }}</span>
             </button>
 
             <button class="btn share-btn " @click="openShareModal">
               <i class="fas fa-share-alt "></i>
-              <span>Partilhar</span>
+              <span class="ms-2">Partilhar</span>
             </button>
 
           </div>
@@ -51,7 +51,7 @@
       <div class="container">
       <h2 class="section-title">Engajamento da Propriedade</h2>
       <div class="row text-center g-4 mt-5">
-        <div class="col-6 col-md-3">
+        <div class="col-4 col-md-3">
         <div class="engagement-card">
           <i class="fas fa-eye fa-2x text-danger"></i>
           <h5 class="mt-3 text-dark">Visualizações</h5>
@@ -68,11 +68,9 @@
         <div class="col-4 col-md-4">
         <div class="engagement-card">
           <i class="fas fa-share-alt fa-2x text-danger"></i>
-          <h5 class="mt-3 text-dark">Compartilhamentos</h5>
+          <h5 class="mt-3 text-dark">Partilhas</h5>
           <p class="mb-0">{{ property.share }}</p>
         </div>
-        </div>
-        <div class="col-4 col-md-4">
         </div>
       </div>
       </div>
