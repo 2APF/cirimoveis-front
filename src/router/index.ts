@@ -25,7 +25,6 @@ import AgentsView from '@/views/others/AgentsView.vue'
 import ListAdsView from '@/views/dashboard/users/ListAdsView.vue'
 import EditPropertyView from '@/views/dashboard/users/EditPropertyView.vue'
 import EditAdmPropertyView from '@/views/dashboard/admin/EditPropertyView.vue'
-import ArtistView from '@/views/others/ArtistView.vue'
 
 
 
@@ -58,18 +57,6 @@ const router = createRouter({
       }
     },
 
-
-    {
-      path: '/artist',
-      name: 'app.artist',
-      component: ArtistView,
-      meta: {
-        title: 'Seja um agente da Cirimóveis',
-        description: 'Junte-se a nós e faça parte da nossa rede de agentes imobiliários',
-        keywords: 'agentes, imóveis, Angola, apartamentos, casas, terrenos',
-        requiresAuth: true
-      }
-    },
 
 
     {

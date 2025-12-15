@@ -58,26 +58,26 @@
           <p class="mb-0">{{ ' '+ property.views }}</p>
         </div>
         </div>
-        <div class="col-6 col-md-3">
+        <div class="col-4 col-md-4">
         <div class="engagement-card">
           <i class="fas fa-heart fa-2x text-danger"></i>
           <h5 class="mt-3 text-dark">Adoros</h5>
           <p class="mb-0">{{ ' '+ property.favoriteCount }}</p>
         </div>
         </div>
-        <div class="col-6 col-md-3">
+        <div class="col-4 col-md-4">
         <div class="engagement-card">
           <i class="fas fa-share-alt fa-2x text-danger"></i>
           <h5 class="mt-3 text-dark">Compartilhamentos</h5>
           <p class="mb-0">-</p>
         </div>
         </div>
-        <div class="col-6 col-md-3">
-        <div class="engagement-card">
+        <div class="col-4 col-md-4">
+        <!-- <div class="engagement-card">
           <i class="fas fa-comments fa-2x text-danger"></i>
           <h5 class="mt-3 text-dark">Tempo de vista</h5>
           <p class="mb-0">-</p>
-        </div>
+        </div> -->
         </div>
       </div>
       </div>
