@@ -367,7 +367,7 @@ const router = createRouter({
       name: 'not-found',
       component: NotFoundView,
       meta: {
-        title: 'Página Não Encontrada - NoHere',
+        title: 'Página Não Encontrada - Cirimóveis',
         description: 'A página que você tentou acessar não foi encontrada.'
       }
     }

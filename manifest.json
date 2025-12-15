@@ -1,6 +1,6 @@
 {
-    "name": "NoHere",
-    "short_name": "NoHere",
+    "name": "Cirimóveis",
+    "short_name": "Cirimóveis",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#ffffff",
@@ -8,13 +8,13 @@
     "scope": "/",
     "theme_color": "#000000",
     "description": "Sua garantia de privacidade e segurança online. Proteja suas conversas com criptografia avançada e desfrute de uma experiência de comunicação livre de preocupações.",
-    "id": "nohere.private.02.#",
+    "id": "cirimoveis.private.02.#",
     "orientation": "any",
     "shortcuts": [
       {
         "name": "Home",
-        "url": "https://nohere.online/",
-        "description": "Página inicial do Chat NoHere"
+        "url": "https://cirimoveis.com/",
+        "description": "Página inicial - Cirimóveis"
       }
     ],
     "categories": [
@@ -30,8 +30,8 @@
       "url": "https://arturfrancisco.me"
     },
     "publisher": {
-      "name": "NoHere Inc.",
-      "url": "https://nohere.online/"
+      "name": "Cirimóveis Inc.",
+      "url": "https://Cirimóveis.online/"
     },
     "privacy_policy": "/privacy-policy",
     "terms_of_service": "/terms-of-service",

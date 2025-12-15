@@ -15,8 +15,8 @@ export default defineConfig({
       registerType: 'autoUpdate', // Atualização automática
       includeAssets: ['favicon.svg', 'robots.txt'],
       manifest: {
-        name: 'NoHere',
-        short_name: 'NoHere',
+        name: 'Cirimóveis',
+        short_name: 'Cirimóveis',
         start_url: '/',
         display: 'standalone',
         background_color: '#ffffff',
