@@ -12,7 +12,7 @@
                 <i class="fas fa-home"></i>
               </div>
               <div class="ms-3">
-                <h3 class="stat-num mb-0">{{ totalProperties }}</h3>
+                <h5 class="stat-num mb-0">{{ totalProperties }}</h5>
                 <p class="stat-text mb-0">Total de casas</p>
               </div>
             </div>
@@ -26,7 +26,7 @@
                 <i class="fas fa-user"></i>
               </div>
               <div class="ms-3">
-                <h3 class="stat-num mb-0">{{ myPropertiesCount }}</h3>
+                <h5 class="stat-num mb-0">{{ myPropertiesCount }}</h5>
                 <p class="stat-text mb-0">Cirimóveis</p>
               </div>
             </div>
@@ -40,7 +40,7 @@
                 <i class="fas fa-coins"></i>
               </div>
               <div class="ms-3">
-                <h3 class="stat-num mb-0">{{ formatTotalValue }}</h3>
+                <h5 class="stat-num mb-0">{{ formatTotalValue }}</h5>
                 <p class="stat-text mb-0">Valor total</p>
               </div>
             </div>
@@ -54,7 +54,7 @@
                 <i class="fas fa-eye"></i>
               </div>
               <div class="ms-3">
-                <h3 class="stat-num mb-0">{{ totalViews }}</h3>
+                <h5 class="stat-num mb-0">{{ totalViews }}</h5>
                 <p class="stat-text mb-0">Visitas</p>
               </div>
             </div>
@@ -310,7 +310,7 @@ const formatPrice = (p: number) => new Intl.NumberFormat('pt-AO', {
 }).format(p)
 
 const getTypeLabel = (t: string) => t === '0' ? 'Casa' : t === '1' ? 'Apartamento' : 'Comercial'
-const statusText = (s: string) => s === '1' ? 'Ativa' : s === '2' ? 'Inativa' : 'Pendente'
+const statusText = (s: string) => s === '1' ? 'Activa' : s === '2' ? 'Pendente' : 'Inativa'
 const statusClass = (s: string) => ({
   '1': 'bg-success', '2': 'bg-warning', '0': 'bg-secondary'
 }[s])
@@ -455,7 +455,7 @@ onUnmounted(() => observer?.disconnect())
 .bg-purple { background: #8b5cf6; }
 .bg-blue { background: #3b82f6; }
 
-.stat-num { font-size: 1.8rem; font-weight: 700; color: #1f2937; }
+.stat-num { font-size: 1.1rem; font-weight: 700; color: #1f2937; }
 .stat-text { font-size: 0.9rem; color: #6b7280; }
 
 .card-filter {

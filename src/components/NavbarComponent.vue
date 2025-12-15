@@ -46,6 +46,7 @@
         <div class="navbar-user-section d-flex align-items-center">
 
           <div class="user-menu me-3" v-if="userNow.id">
+            
             <button class="btn btn-user-menu d-flex align-items-center" @click="toggleUserMenu"
               :aria-expanded="userMenuOpen" aria-label="Menu do usuário">
               <img :src="userAvatar" :alt="`Avatar de ${userName}`" class="user-avatar" />
@@ -103,7 +104,7 @@
 
 
           <button class="btn btn-announce" @click="announceProperty" :disabled="isAnnouncing" :aria-busy="isAnnouncing"
-            :aria-label="isAnnouncing ? 'Carregando...' : 'Anunciar nova casa'">
+            v-if="!userNow.id" :aria-label="isAnnouncing ? 'Carregando...' : 'Anunciar nova casa'">
             <!-- <i class="fas fa-plus me-2" :aria-hidden="true"></i> -->
             <span>{{ isAnnouncing ? 'Carregando...' : 'Acessar' }}</span>
           </button>

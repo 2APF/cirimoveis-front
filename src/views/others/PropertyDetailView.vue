@@ -83,7 +83,8 @@
 
         <div class="virtual-tour-placeholder mt-4 text-center">
           <button class="btn btn-tour" @click="init360Tour" aria-label="Iniciar tour virtual">
-            <i class="fas fa-vr-cardboard me-2"></i> Iniciar Tour Virtual
+            <i class="fas fa-vr-cardboard me-2"></i> Brevemente
+            <!-- <i class="fas fa-vr-cardboard me-2"></i> Iniciar Tour Virtual -->
           </button>
         </div>
       </div>
