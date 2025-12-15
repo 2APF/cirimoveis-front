@@ -82,7 +82,7 @@
 
         <div v-else-if="properties.length === 0" class="empty-state text-center py-5">
           <i class="fas fa-home fa-4x text-muted mb-3"></i>
-          <h3>Nenhum imóvel encontrado</h3>
+          <h3 style="color: black;">Nenhum imóvel encontrado</h3>
           <p class="text-muted">Tente ajustar os filtros ou explore outras opções.</p>
         </div>
 

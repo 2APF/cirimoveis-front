@@ -310,7 +310,7 @@ const formatPrice = (p: number) => new Intl.NumberFormat('pt-AO', {
 }).format(p)
 
 const getTypeLabel = (t: string) => t === '0' ? 'Casa' : t === '1' ? 'Apartamento' : 'Comercial'
-const statusText = (s: string) => s === '1' ? 'Ativa' : s === '2' ? 'Pendente' : 'Inativa'
+const statusText = (s: string) => s === '1' ? 'Ativa' : s === '2' ? 'Inativa' : 'Pendente'
 const statusClass = (s: string) => ({
   '1': 'bg-success', '2': 'bg-warning', '0': 'bg-secondary'
 }[s])

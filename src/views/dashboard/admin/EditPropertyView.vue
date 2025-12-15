@@ -130,11 +130,11 @@
                     <label class="form-check-label" for="active">Activo</label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="radio" id="paused" value="2" v-model="form.status">
+                    <input class="form-check-input" type="radio" id="paused" value="0" v-model="form.status">
                     <label class="form-check-label" for="paused">Pausado</label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="radio" id="pending" value="0" v-model="form.status">
+                    <input class="form-check-input" type="radio" id="pending" value="2" v-model="form.status">
                     <label class="form-check-label" for="pending">Pendente</label>
                   </div>
                 </div>
