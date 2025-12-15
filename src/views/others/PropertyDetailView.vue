@@ -13,7 +13,6 @@
             <div class="property-price">{{ formatPrice(property.price) }}</div>
             <div class="property-status-badge" :class="statusClass">{{ ' '+ property.status }}</div>
 
-
             <div v-if="property.verified" class="verified-badge mt-3 mr-5">
               <i class="fas fa-check-circle me-2"></i>Propriedade Verificada
             </div>
@@ -24,8 +23,10 @@
               <span class="ms-2">{{ isFavorited == true ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos' }}</span>
             </button>
 
-
-
+            <button class="btn share-btn ms-3" @click="openShareModal">
+              <i class="fas fa-share-alt me-2"></i>
+              <span>Partilhar</span>
+            </button>
 
           </div>
           <div class="col-lg-6">
@@ -46,7 +47,6 @@
       </div>
     </section>
 
- 
     <section class="engagement-details py-6">
       <div class="container">
       <h2 class="section-title">Engajamento da Propriedade</h2>
@@ -69,38 +69,19 @@
         <div class="engagement-card">
           <i class="fas fa-share-alt fa-2x text-danger"></i>
           <h5 class="mt-3 text-dark">Compartilhamentos</h5>
-          <p class="mb-0">-</p>
+          <p class="mb-0">{{ shareCount }}</p>
         </div>
         </div>
         <div class="col-4 col-md-4">
-        <!-- <div class="engagement-card">
-          <i class="fas fa-comments fa-2x text-danger"></i>
-          <h5 class="mt-3 text-dark">Tempo de vista</h5>
-          <p class="mb-0">-</p>
-        </div> -->
         </div>
       </div>
       </div>
     </section>
 
-
-
     <section class="property-3d-view py-6">
       <div class="container">
         <h2 class="section-title">Visão 360° da Propriedade</h2>
         <p class="section-subtitle text-center mb-5">Explore a casa em uma experiência imersiva de 360°</p>
-
-        <!-- <div class="panorama-wrapper" :class="{ visible: panoramaVisible }">
-          <div id="panorama" class="panorama-canvas"></div>
-          
-          <div v-if="!has360Image && property.images.length > 0" class="panorama-fallback">
-            <img :src="property.images[0]" alt="Imagem principal" class="img-fluid rounded-3" />
-            <div class="fallback-overlay">
-              <i class="fas fa-vr-cardboard"></i>
-              <p>Tour 360° não disponível</p>
-            </div>
-          </div>
-        </div> -->
 
         <div class="virtual-tour-placeholder mt-4 text-center">
           <button class="btn btn-tour" @click="init360Tour" aria-label="Iniciar tour virtual">
@@ -154,11 +135,6 @@
             <div class="contact-card" :class="{ visible: contactVisible }">
               <div class="contact-info text-center">
                 <p><i class="fas fa-phone me-2"></i><strong>Contacto:</strong> {{ property.phone_one +' | '+ property.phone_two }}</p>
-                <!-- <a :href="`https://wa.me/244123456789?text=Olá, estou interessado na propriedade ${property.title}`"
-                  class="btn btn-whatsapp mt-3" target="_blank" rel="noopener noreferrer"
-                  aria-label="Contactar via WhatsApp">
-                  <i class="fab fa-whatsapp me-2"></i> Contactar via WhatsApp
-                </a> -->
               </div>
             </div>
           </div>
@@ -174,14 +150,6 @@
           <Slide v-for="similar in similarProperties" :key="similar.id">
             <div class="property-card highlight-card" @click="goToDetail(similar.slug)">
               <div class="property-image highlight-img" :style="{ backgroundImage: `url(${similar.image})` }">
-                <!-- <button
-                  class="favorite-btn"
-                  :class="{ favorited: favorites.includes(similar.id) }"
-                  @click.stop="toggleFavorite(similar.id)"
-                  :aria-label="favorites.includes(similar.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'"
-                >
-                  <i :class="favorites.includes(similar.id) ? 'fas fa-heart' : 'far fa-heart'"></i>
-                </button> -->
                 <div v-if="similar.views >= 100" class="views-badge">
                   <i class="fas fa-fire text-white me-1"></i> Muito Vista
                 </div>
@@ -190,7 +158,6 @@
                 </div>
                 <div class="price-tag">
                   {{ formatPrice(similar.price) }} AOA
-                  <!-- <span v-if="similar.type === '2'" class="price-suffix">/mês</span> -->
                 </div>
               </div>
               <div class="property-info p-4">
@@ -198,7 +165,6 @@
                 <p class="property-location text-muted small mb-3">
                   <i class="fas fa-map-marker-alt"></i> {{ similar.location }}
                 </p>
-                <!-- <p class="text-muted small mb-3 line-clamp-2">{{ similar.description }}</p> -->
                 <div class="property-features features-small mb-3">
                   <span><i class="fas fa-bed"></i> {{ similar.bedrooms }}</span>
                   <span><i class="fas fa-bath"></i> {{ similar.bathrooms }}</span>
@@ -227,6 +193,22 @@
     <div v-if="notification.message" class="alert" :class="`alert-${notification.type}`">
       <i :class="`fas fa-${notification.type === 'success' ? 'check-circle' : 'info-circle'}`"></i>
       {{ notification.message }}
+    </div>
+
+    
+
+    <div v-if="showShareModal" class="share-modal-overlay" @click="closeShareModal">
+      <div class="share-modal" @click.stop>
+        <button class="close-btn" @click="closeShareModal">×</button>
+        <h3>Partilhar esta propriedade</h3>
+        <div class="share-link-container">
+          <input type="text" :value="shareUrl" readonly ref="shareInput" />
+          <button class="copy-btn" @click="copyLink">
+            <i class="fas fa-copy me-2"></i>
+          </button>
+        </div>
+        <p class="text-muted small mt-3">Copie o link e partilhe nas suas redes!</p>
+      </div>
     </div>
   </main>
 </template>
@@ -268,7 +250,6 @@ interface Property {
   phone_one: string;
   phone_two: string;
   slug: string;
-
   favoriteCount: number;
   favoriteCheck: boolean;
 }
@@ -300,9 +281,12 @@ const carouselBreakpoints = ref({
   992: { itemsToShow: 3 }
 });
 
+const showShareModal = ref(false);
+const copyButtonText = ref('Copiar');
+const shareCount = ref(0);
+
 let panoramaViewer: any = null;
 
-// a partir de favoriteCheck
 const isFavorited = computed(() => property.value.favoriteCheck);
 
 const statusClass = computed(() => ({
@@ -311,8 +295,9 @@ const statusClass = computed(() => ({
   'status-inacabada': property.value.status === 'Inacabada',
 }));
 
-const parsePhotos = (photosString: string): string[] => {
+const shareUrl = computed(() => window.location.href);
 
+const parsePhotos = (photosString: string): string[] => {
   try {
     const cleaned = photosString.replace(/\\\//g, '/');
     const parsed = JSON.parse(cleaned);
@@ -320,14 +305,11 @@ const parsePhotos = (photosString: string): string[] => {
   } catch {
     return [];
   }
-
 };
 
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat('pt-AO', { minimumFractionDigits: 0 }).format(price) + ' AOA';
 };
-
-
 
 const toggleFavorite = async (id?: number) => {
   const propertyId = id ?? property.value.id;
@@ -340,7 +322,6 @@ const toggleFavorite = async (id?: number) => {
     const res = await axios.post(
       `${API_URL}/product/favorite-product`,
       { product_id: propertyId, user_id: userId, status: isFavoriting ? 1 : 0 },
-      // { headers: token ? { Authorization: `Bearer ${token}` } : {} }
     );
 
     if (isFavoriting) {
@@ -349,7 +330,6 @@ const toggleFavorite = async (id?: number) => {
       property.value.favoriteCount += 1;
       showNotification('Adicionado aos favoritos', 'success');
     } else {
-      
       property.value.favoriteCheck = isFavoriting ? true : false;
       property.value.favoriteCount -= 1;
       favorites.value.splice(index, 1);
@@ -357,29 +337,11 @@ const toggleFavorite = async (id?: number) => {
     }
     localStorage.setItem('favorites', JSON.stringify(favorites.value));
   } catch (error) {
-    // console.error('Erro ao atualizar favoritos:', error);
-    // save user to login redirect
     localStorage.setItem('redirectAfterLogin', router.currentRoute.value.fullPath);
-
     router.push({ name: 'app.auth.login' });
     showNotification('Erro ao atualizar favoritos', 'info');
   }
 };
-
-
-// const toggleFavorite = (id?: number) => {
-//   const propertyId = id ?? property.value.id;
-//   const index = favorites.value.indexOf(propertyId);
-//   if (index > -1) {
-//     favorites.value.splice(index, 1);
-//     showNotification('Removido dos favoritos', 'info');
-//   } else {
-//     favorites.value.push(propertyId);
-//     showNotification('Adicionado aos favoritos', 'success');
-//   }
-//   localStorage.setItem('favorites', JSON.stringify(favorites.value));
-// };
-
 
 const showNotification = (message: string, type: 'success' | 'info') => {
   notification.value = { message, type };
@@ -387,6 +349,49 @@ const showNotification = (message: string, type: 'success' | 'info') => {
     notification.value = { message: '', type: 'info' };
   }, 3000);
 };
+
+const openShareModal = () => {
+  showShareModal.value = true;
+  copyButtonText.value = 'Copiar';
+};
+
+const closeShareModal = () => {
+  showShareModal.value = false;
+};
+
+
+const copyLink = async () => {
+
+  try {
+
+    const response = await fetch(`${API_URL}/product/share/update/${property.value.id}`, {
+      method: 'POST'
+      // headers: { Authorization: `Bearer ${token}` },
+      // body: formData
+    })
+    
+    if (!response.ok) throw new Error('Erro ao atualizar')
+
+
+    //    const res = await axios.post(
+    //   `${API_URL}/product/share/${propertyId}`,
+    //   // { product_id: propertyId, user_id: userId, status: isFavoriting ? 1 : 0 },
+    // )
+
+    await navigator.clipboard.writeText(shareUrl.value);
+    copyButtonText.value = 'Copiado!';
+    shareCount.value += 1;
+    showNotification('Link copiado com sucesso!', 'success');
+  
+    setTimeout(() => {
+      copyButtonText.value = 'Copiar';
+    }, 2000);
+
+  } catch (err) {
+    showNotification('Falha ao copiar', 'info');
+  }
+}
+
 
 const init360Tour = async () => {
   if (panoramaViewer) {
@@ -421,8 +426,6 @@ const loadProperty = async () => {
     });
     const data = response.data.product;
     const favorite = response.data;
-
-    // console.log('oo:', response.data)
 
     const photos = parsePhotos(data.photos);
     property.value = {
@@ -495,7 +498,6 @@ const loadSimilarProperties = async () => {
   }
 };
 
-// esta pagina e de detalhes de propriedade, quero que actualize quando for para ver outra propriedade
 const goToDetail = (slug: string) => {
   router.push({ name: 'app.property.detail', params: { slug } });
 };
@@ -620,7 +622,6 @@ onMounted(async () => {
   font-size: 1.05rem;
   color: var(--primary-red);
   font-weight: 600;
-
   background: var(--soft-red);
   padding: 10px 20px;
   border-radius: 25px;
@@ -652,6 +653,26 @@ onMounted(async () => {
 .favorite-btn.favorited {
   background: var(--primary-red);
   color: white;
+}
+
+.share-btn {
+  background: white;
+  border: 2.5px solid var(--primary-red);
+  border-radius: 60px;
+  padding: 10px 24px;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--primary-red);
+  transition: all 0.4s cubic-bezier(0.34, 0.69, 0.36, 0.98);
+  box-shadow: 0 8px 25px rgba(211, 47, 47, 0.18);
+}
+
+.share-btn:hover {
+  background: var(--primary-red);
+  color: white;
+  transform: translateY(-4px) scale(1.03);
 }
 
 .property-carousel :deep(.carousel__slide) {
@@ -718,63 +739,6 @@ onMounted(async () => {
 .property-3d-view {
   background: var(--light-bg);
   padding: 100px 0;
-}
-
-.panorama-wrapper {
-  position: relative;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 12px 35px var(--shadow-medium);
-  height: 560px;
-  opacity: 0;
-  transform: translateY(40px);
-  transition: all 0.7s ease;
-}
-
-.panorama-wrapper.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.panorama-canvas {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-.panorama-fallback {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  border-radius: 20px;
-}
-
-.panorama-fallback img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: brightness(0.65);
-}
-
-.fallback-overlay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  color: white;
-  z-index: 2;
-}
-
-.fallback-overlay i {
-  font-size: 3.5rem;
-  margin-bottom: 12px;
-  opacity: 0.9;
-}
-
-.fallback-overlay p {
-  font-size: 1.3rem;
-  font-weight: 600;
 }
 
 .virtual-tour-placeholder {
@@ -921,33 +885,6 @@ onMounted(async () => {
   transform: scale(1.03);
 }
 
-.highlight-card .favorite-btn {
-  position: absolute;
-  top: 18px;
-  left: 18px;
-  background: rgba(255, 255, 255, 0.95);
-  border: none;
-  border-radius: 50%;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--medium-gray);
-  transition: all 0.3s;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(8px);
-}
-
-.highlight-card .favorite-btn:hover {
-  color: var(--primary-red);
-  transform: scale(1.12);
-}
-
-.highlight-card .favorite-btn.favorited {
-  color: var(--primary-red);
-}
-
 .views-badge,
 .verified-badge {
   position: absolute;
@@ -982,11 +919,6 @@ onMounted(async () => {
   font-weight: 700;
   font-size: 1.05rem;
   backdrop-filter: blur(10px);
-}
-
-.price-suffix {
-  font-size: 0.78rem;
-  opacity: 0.9;
 }
 
 .property-info {
@@ -1046,13 +978,6 @@ onMounted(async () => {
   transform: translateY(-1px);
 }
 
-.line-clamp-2 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
 .btn-tour,
 .btn-whatsapp {
   background: var(--primary-red);
@@ -1073,14 +998,6 @@ onMounted(async () => {
   box-shadow: 0 16px 35px rgba(211, 47, 47, 0.3);
 }
 
-.btn-whatsapp {
-  background: #25D366;
-}
-
-.btn-whatsapp:hover {
-  background: #1da851;
-}
-
 .alert {
   position: fixed;
   top: 90px;
@@ -1092,6 +1009,7 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 0.6rem;
+  
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
   z-index: 9999;
   animation: slideIn 0.4s ease;
@@ -1111,22 +1029,102 @@ onMounted(async () => {
     opacity: 0;
     transform: translateX(50px);
   }
-
   to {
     opacity: 1;
     transform: translateX(0);
   }
 }
 
+.share-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(5px);
+}
+
+.share-modal {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+  position: relative;
+  animation: modalFade 0.3s ease;
+}
+
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: #999;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: var(--primary-red);
+}
+
+.share-modal h3 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--dark-charcoal);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.share-link-container {
+  display: flex;
+  gap: 10px;
+}
+
+.share-link-container input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  font-size: 1rem;
+  background: #f9f9f9;
+}
+
+.copy-btn {
+  background: var(--primary-red);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0 20px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all 0.3s;
+}
+
+.copy-btn:hover {
+  background: #c62828;
+  transform: scale(1.05);
+}
+
+@keyframes modalFade {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 @media (max-width: 992px) {
   .property-title {
     font-size: 2.8rem;
   }
-
   .property-price {
     font-size: 2.3rem;
   }
-
   .carousel-image-wrapper img {
     height: 380px;
   }
@@ -1136,29 +1134,29 @@ onMounted(async () => {
   .property-hero {
     padding: 80px 0 60px;
   }
-
   .property-title {
     font-size: 2.4rem;
   }
-
   .property-price {
     font-size: 2rem;
   }
-
   .carousel-image-wrapper img {
     height: 320px;
   }
-
-  .panorama-wrapper {
-    height: 380px;
-  }
-
   .section-title {
     font-size: 2.5rem;
   }
-
   .highlight-img {
     height: 240px;
+  }
+  .favorite-btn, .share-btn {
+    margin-top: 12px;
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+  .share-btn {
+    margin-left: 0;
   }
 }
 
@@ -1166,24 +1164,15 @@ onMounted(async () => {
   .property-title {
     font-size: 2rem;
   }
-
   .property-price {
     font-size: 1.8rem;
   }
-
   .carousel-image-wrapper img {
     height: 280px;
   }
-
-  .panorama-wrapper {
-    height: 300px;
-  }
-
-  .favorite-btn {
-    margin-top: 16px;
-    margin-left: 0;
-    padding: 12px 28px;
+  .favorite-btn, .share-btn {
     font-size: 1rem;
+    padding: 12px 20px;
   }
 }
 </style>
