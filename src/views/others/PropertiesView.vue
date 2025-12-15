@@ -158,11 +158,6 @@
       <i class="fas fa-filter"></i>
     </button>
 
-    <button id="scrollToTopBtn" class="btn btn-danger position-fixed rounded-circle"
-      :style="{ display: showScrollToTop ? 'block' : 'none' }" @click="scrollToTop">
-      <i class="fas fa-arrow-up"></i>
-    </button>
-
     <FooterComponent />
   </main>
 </template>

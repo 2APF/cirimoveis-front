@@ -181,7 +181,7 @@ const router = createRouter({
         title: 'Criar Propriedade',
         description: 'Visão geral do sistema administrativo da Cirimóveis',
         keywords: 'dashboard, administração, Cirimóveis',
-        requiresAuth: true
+        requiresAuthUser: true
       }
     },
 
@@ -195,24 +195,10 @@ const router = createRouter({
         title: 'Dashboard - Cirimóveis',
         description: 'Visão geral do sistema administrativo da Cirimóveis',
         keywords: 'dashboard, administração, Cirimóveis',
-        requiresAuth: true
+        requiresAuthUser: true
       }
     },
 
-
-
-
-    {
-      path: '/reports-user',
-      name: 'app.user.reports',
-      component: ReportsUserView,
-      meta: {
-        title: 'Dashboard - Cirimóveis',
-        description: 'Visão geral do sistema administrativo da Cirimóveis',
-        keywords: 'dashboard, administração, Cirimóveis',
-        // requiresAuth: true
-      }
-    },
 
 
 
@@ -429,11 +415,11 @@ router.beforeEach(async (to, from, next) => {
         }
         return next()
       } else {
-        router.push({ name: 'app.auth.login' })
+        return next()
 
       }
     } catch (error) {
-      router.push({ name: 'app.auth.login' })
+        return next()
     }
   }
 
