@@ -23,8 +23,8 @@
               <span class="ms-2">{{ isFavorited == true ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos' }}</span>
             </button>
 
-            <button class="btn share-btn ms-3" @click="openShareModal">
-              <i class="fas fa-share-alt me-2"></i>
+            <button class="btn share-btn " @click="openShareModal">
+              <i class="fas fa-share-alt "></i>
               <span>Partilhar</span>
             </button>
 
@@ -69,7 +69,7 @@
         <div class="engagement-card">
           <i class="fas fa-share-alt fa-2x text-danger"></i>
           <h5 class="mt-3 text-dark">Compartilhamentos</h5>
-          <p class="mb-0">{{ shareCount }}</p>
+          <p class="mb-0">{{ property.share }}</p>
         </div>
         </div>
         <div class="col-4 col-md-4">
@@ -207,7 +207,10 @@
             <i class="fas fa-copy me-2"></i>
           </button>
         </div>
+
+        <p v-if="copyButtonText != ''" style="color: red; font-size: 12pt; margin-bottom: 10px; margin-top: 10px;">Link copiado, podes colar.</p>
         <p class="text-muted small mt-3">Copie o link e partilhe nas suas redes!</p>
+        
       </div>
     </div>
   </main>
@@ -250,6 +253,7 @@ interface Property {
   phone_one: string;
   phone_two: string;
   slug: string;
+  share: number;
   favoriteCount: number;
   favoriteCheck: boolean;
 }
@@ -264,7 +268,7 @@ const property = ref<Property>({
   bedrooms: 0, bathrooms: 0, area: '', status: '', verified: false,
   description: '', type: '', garage: false, piscina: false, jardim: false, 
   arcondicionado: false, views: 0, phone_one: '', phone_two: '', slug: '',
-  favoriteCount: 0, favoriteCheck: false
+  favoriteCount: 0, favoriteCheck: false, share: 0
 });
 
 const similarProperties = ref<Property[]>([]);
@@ -282,7 +286,7 @@ const carouselBreakpoints = ref({
 });
 
 const showShareModal = ref(false);
-const copyButtonText = ref('Copiar');
+let copyButtonText = '';
 const shareCount = ref(0);
 
 let panoramaViewer: any = null;
@@ -350,10 +354,12 @@ const showNotification = (message: string, type: 'success' | 'info') => {
   }, 3000);
 };
 
+
 const openShareModal = () => {
   showShareModal.value = true;
-  copyButtonText.value = 'Copiar';
+  // copyButtonText.value = 'Copiar';
 };
+
 
 const closeShareModal = () => {
   showShareModal.value = false;
@@ -379,12 +385,12 @@ const copyLink = async () => {
     // )
 
     await navigator.clipboard.writeText(shareUrl.value);
-    copyButtonText.value = 'Copiado!';
+    copyButtonText = 'Copiado!';
     shareCount.value += 1;
     showNotification('Link copiado com sucesso!', 'success');
   
     setTimeout(() => {
-      copyButtonText.value = 'Copiar';
+      copyButtonText = '';
     }, 2000);
 
   } catch (err) {
@@ -452,6 +458,7 @@ const loadProperty = async () => {
       phone_one: data.phone_one || '',
       phone_two: data.phone_two || '',
       slug: data.slug || '',
+      share: data.share || '',
     };
   } catch (error) {
     console.error('Erro ao carregar propriedade:', error);
@@ -490,7 +497,8 @@ const loadSimilarProperties = async () => {
           piscina: false,
           jardim: false,
           arcondicionado: false,
-          views: p.views || 0
+          views: p.views || 0,
+      share: data.share || '',
         };
       });
   } catch (error) {
@@ -659,7 +667,8 @@ onMounted(async () => {
   background: white;
   border: 2.5px solid var(--primary-red);
   border-radius: 60px;
-  padding: 10px 24px;
+  padding: 10px 20px;
+  margin-left: 20px;
   display: inline-flex;
   align-items: center;
   font-weight: 700;
@@ -1154,9 +1163,6 @@ onMounted(async () => {
     margin-left: 0;
     width: 100%;
     justify-content: center;
-  }
-  .share-btn {
-    margin-left: 0;
   }
 }
 
