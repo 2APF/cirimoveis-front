@@ -75,7 +75,7 @@
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label>Ano de Construção *</label>
+                        <label>Ano de Construção (opcional)</label>
                         <input v-model.number="form.year_built" type="number" min="1900" max="2025"
                           class="form-control" :class="{ 'is-invalid': errors.year_built }" />
                         <div v-if="errors.year_built" class="invalid-feedback">{{ errors.year_built }}</div>
@@ -86,10 +86,11 @@
                         <label>Condição *</label>
                         <select v-model="form.condition" class="form-select" :class="{ 'is-invalid': errors.condition }">
                           <option value="">Selecione...</option>
-                          <option value="new">Novo</option>
-                          <option value="used">Usado</option>
-                          <option value="reformed">Reformado</option>
+                          <option value="new">Nova</option>
+                          <option value="used">Usada</option>
+                          <option value="reformed">Reformada</option>
                         </select>
+                        <div v-if="errors.condition" class="invalid-feedback">{{ errors.year_built }}</div>
                       </div>
                     </div>
                   </div>
@@ -102,7 +103,7 @@
                   </div>
 
                   <div class="form-group">
-                    <label>Descrição Completa *</label>
+                    <label>Descrição Complementar *</label>
                     <textarea v-model="form.description" rows="5" class="form-control"
                       :class="{ 'is-invalid': errors.description }"
                       placeholder="Descreva detalhadamente a propriedade..."></textarea>
@@ -456,14 +457,14 @@ const submitProperty = async () => {
   formData.append('type', form.type === 'sale' ? '1' : '2')
   formData.append('bedrooms', form.bedrooms.toString())
   formData.append('bathrooms', form.bathrooms.toString())
-  formData.append('area', form.area.toString())
+  formData.append('area', form.area.toString() ?? '30')
   formData.append('category_id', form.category_id)
 
 
   formData.append('phone_one', form.phone_one)
 
 
-   if (form.phone_two) formData.append('phone_two', form.phone_two)
+  if (form.phone_two) formData.append('phone_two', form.phone_two)
 
 
   formData.append('user_id', Cookies.get('user') || '')
@@ -484,6 +485,7 @@ const submitProperty = async () => {
   imageFiles.value.forEach((file, i) => formData.append(`photos[${i}]`, file))
 
   try {
+
     const token = Cookies.get('token')
     if (!token) throw new Error('Sessão expirada')
 
@@ -552,15 +554,14 @@ const removeImage = (i: number) => {
 }
 
 const isFormValid = computed(() => {
-  return form.name.trim().length >= 5 &&
+  return form.name.trim().length >= 2 &&
     form.type &&
     form.price > 0 &&
     form.address.trim() &&
     form.category_id &&
     form.bedrooms >= 1 &&
     form.bathrooms >= 1 &&
-    imagePreview.value.length > 0 &&
-    imagePreview.value.length <= 5
+    imagePreview.value.length > 0
 })
 
 const isBasicInfoComplete = computed(() =>
