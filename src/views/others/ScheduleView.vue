@@ -36,6 +36,7 @@
                     <input type="date" v-model="form.date" :min="today" class="form-control" required />
                   </div>
                   
+                  
                   <div class="col-6">
                     <label class="form-label">Assunto *</label>
                     <select v-model="form.subject" class="form-control" required>

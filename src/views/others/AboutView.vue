@@ -80,9 +80,7 @@
       </div>
     </section>
 
-
     
-    <!-- Impulse Section -->
     <section class="impulse-section py-5">
       <div class="container">
         <h2 class="section-title">Nosso Impulso</h2>
