@@ -114,6 +114,9 @@
       </div>
     </section>
 
+
+
+
     <section class="services-section py-6">
       <div class="container">
         <h2 class="section-title">Nossos Serviços</h2>
@@ -136,6 +139,7 @@
         </div>
       </div>
     </section>
+    
 
     <section class="testimonials py-6 bg-light">
       <div class="container">
@@ -183,9 +187,11 @@
 
     <section class="cta-final py-6 text-white text-center">
       <div class="container">
-        <h2 class="mb-4">Pronto para vender ou remodelar?</h2>
-        <p class="lead mb-4">Cadastre-se grátis e publique sua casa</p>
-        <button class="btn btn-light btn-lg px-5" @click="goToProperties">Começar Agora</button>
+        <h2 class="mb-4">Venha ter connosco</h2>
+        <p class="lead mb-4">Queres comprar, vender, legalizar casa ou terreno? nós ajudamos</p>
+         <RouterLink class="btn btn-light btn-lg px-5" :to="{ name: 'app.schedule' }">
+               Agendar
+            </RouterLink>
       </div>
     </section>
 

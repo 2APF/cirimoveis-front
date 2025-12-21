@@ -25,6 +25,7 @@ import AgentsView from '@/views/others/AgentsView.vue'
 import ListAdsView from '@/views/dashboard/users/ListAdsView.vue'
 import EditPropertyView from '@/views/dashboard/users/EditPropertyView.vue'
 import EditAdmPropertyView from '@/views/dashboard/admin/EditPropertyView.vue'
+import ScheduleView from '@/views/others/ScheduleView.vue'
 
 
 
@@ -97,6 +98,19 @@ const router = createRouter({
         requiresAuth: true
       }
     },
+    
+    {
+      path: '/schedule',
+      name: 'app.schedule',
+      component: ScheduleView,
+      meta: {
+        title: 'Sobre a Cirimóveis',
+        description: 'Saiba mais sobre a Cirimóveis, nossa missão, visão e valores no mercado imobiliário angolano.',
+        keywords: 'sobre nós, Cirimóveis, imóveis, Angola',
+        requiresAuth: true
+      }
+    },
+
 
 
     {
