@@ -187,15 +187,16 @@
 
     <section class="cta-final py-6 text-white text-center">
       <div class="container">
-        <h2 class="mb-4">Venha ter connosco</h2>
+        <h2 class="mb-4">Somos a tua solução</h2>
         <p class="lead mb-4">Queres comprar, vender, legalizar casa ou terreno? nós ajudamos</p>
-         <RouterLink class="btn btn-light btn-lg px-5" :to="{ name: 'app.schedule' }">
-               Agendar
+         <RouterLink class="btn btn-light btn-lg px-5" :to="{ name: 'app.we' }">
+               Quem Somos
             </RouterLink>
       </div>
     </section>
 
     <FooterComponent />
+    
   </main>
 </template>
 

@@ -10,16 +10,30 @@
           <div class="col-md-4 mb-4">
             <h5 class="text-uppercase text-danger fw-bold mb-3">Links Úteis</h5>
             <ul class="list-unstyled">
-              <li v-for="link in footerLinks" :key="link.href">
-                <a class="footer-link" :href="link.href" @click.prevent="scrollToSection(link.href)">{{ link.text }}</a>
+              <li>
+                <a class="footer-link" href="/we" >Quem Somos</a>
               </li>
+              <li>
+                <a class="footer-link" href="/properties">Propriedades</a>
+              </li>
+              <li>
+                <a class="footer-link" href="/property-create" >Publicar Casa</a>
+              </li>
+              <li>
+                <a class="footer-link" href="" >Termos de Uso</a>
+              </li>
+
+              <li>
+                <a class="footer-link" href="" >Políticas de Cookie</a>
+              </li>
+
             </ul>
           </div>
           <div class="col-md-4 mb-4">
             <h5 class="text-uppercase text-danger fw-bold mb-3">Contacto</h5>
-            <p><i class="fas fa-envelope me-2"></i>info@cirimoveis.ao</p>
-            <p><i class="fas fa-phone me-2"></i>+244 952 321 174</p>
-            <p><i class="fas fa-map-marker-alt me-2"></i>Luanda, Angola</p>
+            <p><i class="fas fa-envelope me-2"></i>geral@cirimoveis.com</p>
+            <p><i class="fas fa-phone me-2"></i>+244 944 970 470</p>
+            <p><i class="fas fa-map-marker-alt me-2"></i>Maianga, Luanda, Angola</p>
             <div class="mt-3">
               <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
               <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
