@@ -19,12 +19,13 @@
               <li>
                 <a class="footer-link" href="/property-create" >Publicar Casa</a>
               </li>
+
               <li>
-                <a class="footer-link" href="" >Termos de Uso</a>
+                <a class="footer-link" href="#" >Termos de Uso</a>
               </li>
 
               <li>
-                <a class="footer-link" href="" >Políticas de Cookie</a>
+                <a class="footer-link" href="#" >Políticas de Cookie</a>
               </li>
 
             </ul>
