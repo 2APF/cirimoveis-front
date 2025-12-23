@@ -6,19 +6,19 @@
       <div class="container">
         <div class="row align-items-center g-5">
           <div class="col-lg-6">
-            <h1 class="property-title">{{ ' '+ property.title }}</h1>
+            <h1 class="property-title">{{ ' ' + property.title }}</h1>
             <p class="property-location">
-              <i class="fas fa-map-marker-alt me-2"></i>{{ ' '+ property.location }}
+              <i class="fas fa-map-marker-alt me-2"></i>{{ ' ' + property.location }}
             </p>
             <div class="property-price">{{ formatPrice(property.price) }}</div>
-            <div class="property-status-badge" :class="statusClass">{{ ' '+ property.status }}</div>
+            <div class="property-status-badge" :class="statusClass">{{ ' ' + property.status }}</div>
 
             <div v-if="property.verified" class="verified-badge mt-3 mr-5">
               <i class="fas fa-check-circle me-2"></i>Propriedade Verificada
             </div>
 
-            <button class="btn favorite-btn " :class="{ favorited: isFavorited == true ? true : false }" @click="() => toggleFavorite(property.id)"
-              aria-label="Adicionar ou remover dos favoritos">
+            <button class="btn favorite-btn " :class="{ favorited: isFavorited == true ? true : false }"
+              @click="() => toggleFavorite(property.id)" aria-label="Adicionar ou remover dos favoritos">
               <i :class="isFavorited == true ? 'fas fa-heart' : 'far fa-heart'"></i>
               <span class="ms-2">{{ isFavorited == true ? 'Remover dos Favoritos' : 'Favoritar' }}</span>
             </button>
@@ -49,42 +49,41 @@
 
     <section class="engagement-details py-6">
       <div class="container">
-      <h2 class="section-title">Engajamento da Propriedade</h2>
-      <div class="row text-center g-4 mt-5">
-        <div class="col-4 col-md-3">
-        <div class="engagement-card">
-          <i class="fas fa-eye fa-2x text-danger"></i>
-          <h5 class="mt-3 text-dark">Visualizações</h5>
-          <p class="mb-0">{{ ' '+ property.views }}</p>
+        <h2 class="section-title">Engajamento da Propriedade</h2>
+        <div class="row text-center g-4 mt-5">
+          <div class="col-4 col-md-3">
+            <div class="engagement-card">
+              <i class="fas fa-eye fa-2x text-danger"></i>
+              <h5 class="mt-3 text-dark">Visualizações</h5>
+              <p class="mb-0">{{ ' ' + property.views }}</p>
+            </div>
+          </div>
+          <div class="col-4 col-md-4">
+            <div class="engagement-card">
+              <i class="fas fa-heart fa-2x text-danger"></i>
+              <h5 class="mt-3 text-dark">Adoros</h5>
+              <p class="mb-0">{{ ' ' + property.favoriteCount }}</p>
+            </div>
+          </div>
+          <div class="col-4 col-md-4">
+            <div class="engagement-card">
+              <i class="fas fa-share-alt fa-2x text-danger"></i>
+              <h5 class="mt-3 text-dark">Partilhas</h5>
+              <p class="mb-0">{{ property.share }}</p>
+            </div>
+          </div>
         </div>
-        </div>
-        <div class="col-4 col-md-4">
-        <div class="engagement-card">
-          <i class="fas fa-heart fa-2x text-danger"></i>
-          <h5 class="mt-3 text-dark">Adoros</h5>
-          <p class="mb-0">{{ ' '+ property.favoriteCount }}</p>
-        </div>
-        </div>
-        <div class="col-4 col-md-4">
-        <div class="engagement-card">
-          <i class="fas fa-share-alt fa-2x text-danger"></i>
-          <h5 class="mt-3 text-dark">Partilhas</h5>
-          <p class="mb-0">{{ property.share }}</p>
-        </div>
-        </div>
-      </div>
       </div>
     </section>
 
     <section class="property-3d-view py-6">
       <div class="container">
-        <h2 class="section-title">Visão 360° da Propriedade</h2>
-        <p class="section-subtitle text-center mb-5">Explore a casa em uma experiência imersiva de 360°</p>
+        <h2 class="section-title">Agendar Visita</h2>
+        <p class="section-subtitle text-center mb-5">Vá ver de perto, veja com teus próprios olhos, agende</p>
 
         <div class="virtual-tour-placeholder mt-4 text-center">
-          <button class="btn btn-tour" @click="init360Tour" aria-label="Iniciar tour virtual">
-            <i class="fas fa-vr-cardboard me-2"></i> Brevemente
-            <!-- <i class="fas fa-vr-cardboard me-2"></i> Iniciar Tour Virtual -->
+          <button class="btn btn-tour" @click="openScheduleModal">
+            <i class="fas fa-calendar-alt me-2"></i> Agendar Visita
           </button>
         </div>
       </div>
@@ -96,23 +95,29 @@
         <div class="row g-5">
           <div class="col-md-6">
             <ul class="details-list">
-              <li><i class="fas fa-bed me-2"></i><strong>Quartos: </strong> {{ ' '+ property.bedrooms }}</li>
-              <li><i class="fas fa-bath me-2"></i><strong>Banheiros: </strong> {{ ' '+ property.bathrooms }}</li>
-              <li><i class="fas fa-ruler-combined me-2"></i><strong>Área Total: </strong> {{ ' '+ property.area }} m²</li>
+              <li><i class="fas fa-bed me-2"></i><strong>Quartos: </strong> {{ ' ' + property.bedrooms }}</li>
+              <li><i class="fas fa-bath me-2"></i><strong>Banheiros: </strong> {{ ' ' + property.bathrooms }}</li>
+              <li><i class="fas fa-ruler-combined me-2"></i><strong>Área Total: </strong> {{ ' ' + property.area }} m²
+              </li>
               <li><i class="fas fa-home me-2"></i><strong>Tipologia: </strong> -</li>
-              <li><i class="fas fa-car me-2"></i><strong>Garagem: </strong> {{ ' '+ property.garage ? 'Sim' : 'Não' }}</li>
+              <li><i class="fas fa-car me-2"></i><strong>Garagem: </strong> {{ ' ' + property.garage ? 'Sim' : 'Não' }}
+              </li>
             </ul>
           </div>
           <div class="col-md-6">
             <ul class="details-list">
-              <li><i class="fas fa-swimming-pool me-2"></i><strong>Piscina:</strong> {{ ' '+ property.piscina ? 'Sim' : 'Não'
-                }}
-              </li>   
-              <li><i class="fas fa-tree me-2"></i><strong>Jardim:</strong> {{ ' '+ property.jardim ? 'Sim' : 'Não' }}</li>
-              <li><i class="fas fa-snowflake me-2"></i><strong>Ar Condicionado:</strong> {{ ' '+ property.arcondicionado ?
+              <li><i class="fas fa-swimming-pool me-2"></i><strong>Piscina:</strong> {{ ' ' + property.piscina ? 'Sim' :
+                'Não'
+              }}
+              </li>
+              <li><i class="fas fa-tree me-2"></i><strong>Jardim:</strong> {{ ' ' + property.jardim ? 'Sim' : 'Não' }}
+              </li>
+              <li><i class="fas fa-snowflake me-2"></i><strong>Ar Condicionado:</strong> {{ ' ' +
+                property.arcondicionado
+                ?
                 'Sim'
                 : 'Não' }}</li>
-              <li><i class="fas fa-building me-2"></i><strong>Estado:</strong> {{ ' '+ property.status }}</li>
+              <li><i class="fas fa-building me-2"></i><strong>Estado:</strong> {{ ' ' + property.status }}</li>
               <li><i class="fas fa-money-bill-wave me-2"></i><strong>Preço:</strong> {{ formatPrice(property.price) }}
               </li>
             </ul>
@@ -120,7 +125,7 @@
         </div>
         <div class="property-description mt-5">
           <h3>Descrição Completa</h3>
-          <p>{{ ' '+ property.description }}</p>
+          <p>{{ ' ' + property.description }}</p>
         </div>
       </div>
     </section>
@@ -133,7 +138,8 @@
           <div class="col-lg-6">
             <div class="contact-card" :class="{ visible: contactVisible }">
               <div class="contact-info text-center">
-                <p><i class="fas fa-phone me-2"></i><strong>Contacto:</strong> {{ property.phone_one +' | '+ property.phone_two }}</p>
+                <p><i class="fas fa-phone me-2"></i><strong>Contacto:</strong> {{ property.phone_one + ' | ' +
+                  property.phone_two }}</p>
               </div>
             </div>
           </div>
@@ -194,8 +200,6 @@
       {{ notification.message }}
     </div>
 
-    
-
     <div v-if="showShareModal" class="share-modal-overlay" @click="closeShareModal">
       <div class="share-modal" @click.stop>
         <button class="close-btn" @click="closeShareModal">×</button>
@@ -207,9 +211,60 @@
           </button>
         </div>
 
-        <p v-if="copyButtonText != ''" style="color: red; font-size: 12pt; margin-bottom: 10px; margin-top: 10px;">Link copiado, podes colar.</p>
+        <p v-if="copyButtonText != ''" style="color: red; font-size: 12pt; margin-bottom: 10px; margin-top: 10px;">Link
+          copiado, podes colar.</p>
         <p class="text-muted small mt-3">Copie o link e partilhe nas suas redes!</p>
-        
+
+      </div>
+    </div>
+
+    <!-- Modal Agendar Visita - Totalmente Responsiva -->
+    <div v-if="showScheduleModal" class="schedule-modal-overlay" @click="closeScheduleModal">
+      <div class="schedule-modal-content" @click.stop>
+        <button class="close-btn" @click="closeScheduleModal">×</button>
+        <h3 class="modal-title">Agendar Visita à Propriedade</h3>
+        <p class="modal-subtitle">{{ property.title }}</p>
+
+        <form @submit.prevent="submitSchedule" class="schedule-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nome completo *</label>
+              <input type="text" v-model="scheduleForm.name" required placeholder="Ex: João Silva" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Telefone *</label>
+              <input type="tel" v-model="scheduleForm.phone" required placeholder="+244 9xx xxx xxx" />
+            </div>
+            <div class="form-group">
+              <label>Email *</label>
+              <input type="email" v-model="scheduleForm.email" required placeholder="exemplo@email.com" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Data pretendida *</label>
+              <input type="date" v-model="scheduleForm.date" :min="todayDate" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label>Mensagem (opcional)</label>
+              <textarea v-model="scheduleForm.message" rows="4"
+                placeholder="Horário preferido, número de pessoas, dúvidas..."></textarea>
+            </div>
+          </div>
+
+          <div class="form-actions">
+              <button type="submit" class="btn-submit" :disabled="submitting">
+              <i class="fas fa-paper-plane me-2"></i> {{ submitting ? 'Enviando...' : 'Enviar Pedido' }}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </main>
@@ -225,6 +280,8 @@ import { useRoute, useRouter } from 'vue-router';
 import FooterComponent from '@/components/FooterComponent.vue';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+
+const submitting = ref(false)
 
 const route = useRoute();
 const router = useRouter();
@@ -265,7 +322,7 @@ interface Notification {
 const property = ref<Property>({
   id: 0, title: '', location: '', price: 0, image: '', images: [],
   bedrooms: 0, bathrooms: 0, area: '', status: '', verified: false,
-  description: '', type: '', garage: false, piscina: false, jardim: false, 
+  description: '', type: '', garage: false, piscina: false, jardim: false,
   arcondicionado: false, views: 0, phone_one: '', phone_two: '', slug: '',
   favoriteCount: 0, favoriteCheck: false, share: 0
 });
@@ -285,8 +342,19 @@ const carouselBreakpoints = ref({
 });
 
 const showShareModal = ref(false);
+const showScheduleModal = ref(false);
 let copyButtonText = '';
 const shareCount = ref(0);
+
+const scheduleForm = ref({
+  name: '',
+  phone: '',
+  email: '',
+  date: '',
+  message: ''
+});
+
+const todayDate = new Date().toISOString().split('T')[0];
 
 let panoramaViewer: any = null;
 
@@ -350,44 +418,30 @@ const showNotification = (message: string, type: 'success' | 'info') => {
   notification.value = { message, type };
   setTimeout(() => {
     notification.value = { message: '', type: 'info' };
-  }, 3000);
+  }, 5000);
 };
-
 
 const openShareModal = () => {
   showShareModal.value = true;
-  // copyButtonText.value = 'Copiar';
 };
-
 
 const closeShareModal = () => {
   showShareModal.value = false;
 };
 
-
 const copyLink = async () => {
-
   try {
-
     const response = await fetch(`${API_URL}/product/share/update/${property.value.id}`, {
       method: 'POST'
-      // headers: { Authorization: `Bearer ${token}` },
-      // body: formData
     })
-    
+
     if (!response.ok) throw new Error('Erro ao atualizar')
-
-
-    //    const res = await axios.post(
-    //   `${API_URL}/product/share/${propertyId}`,
-    //   // { product_id: propertyId, user_id: userId, status: isFavoriting ? 1 : 0 },
-    // )
 
     await navigator.clipboard.writeText(shareUrl.value);
     copyButtonText = 'Copiado!';
     shareCount.value += 1;
     showNotification('Link copiado com sucesso!', 'success');
-  
+
     setTimeout(() => {
       copyButtonText = '';
     }, 2000);
@@ -395,8 +449,52 @@ const copyLink = async () => {
   } catch (err) {
     showNotification('Falha ao copiar', 'info');
   }
-}
+};
 
+const openScheduleModal = () => {
+  showScheduleModal.value = true;
+};
+
+const closeScheduleModal = () => {
+  showScheduleModal.value = false;
+  scheduleForm.value = { name: '', phone: '', email: '', date: '', message: '' };
+};
+
+const submitSchedule = async () => {
+  
+if (submitting.value) return
+
+  submitting.value = true
+
+  try {
+
+
+    const token = Cookies.get('token');
+    await axios.post(`${API_URL}/product/visit/schedule/${property.value.id}`, {
+      product_id: property.value.id,
+      name: scheduleForm.value.name,
+      phone: scheduleForm.value.phone,
+      email: scheduleForm.value.email,
+      desired_date: scheduleForm.value.date,
+      message: scheduleForm.value.message || null
+    }, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {}
+    });
+
+
+    submitting.value = false
+
+    showNotification('Pedido enviado com sucesso! Em breve será contactado.', 'success');
+    closeScheduleModal();
+  } catch (error) {
+
+    console.log(error)
+
+    submitting.value = false
+
+    showNotification('Erro ao enviar o pedido. Tente novamente.', 'info');
+  }
+};
 
 const init360Tour = async () => {
   if (panoramaViewer) {
@@ -457,7 +555,7 @@ const loadProperty = async () => {
       phone_one: data.phone_one || '',
       phone_two: data.phone_two || '',
       slug: data.slug || '',
-      share: data.share || '',
+      share: data.share || 0,
     };
   } catch (error) {
     console.error('Erro ao carregar propriedade:', error);
@@ -497,7 +595,7 @@ const loadSimilarProperties = async () => {
           jardim: false,
           arcondicionado: false,
           views: p.views || 0,
-      share: data.share || '',
+          share: p.share || 0,
         };
       });
   } catch (error) {
@@ -571,6 +669,11 @@ onMounted(async () => {
 .property-hero.loaded {
   opacity: 1;
   transform: translateY(0);
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .property-hero::before {
@@ -986,24 +1089,22 @@ onMounted(async () => {
   transform: translateY(-1px);
 }
 
-.btn-tour,
-.btn-whatsapp {
+.btn-tour {
   background: var(--primary-red);
   color: #fff;
-  padding: 14px 32px;
+  padding: 16px 40px;
   border-radius: 60px;
   font-weight: 700;
   border: none;
   transition: all 0.4s;
-  font-size: 1.15rem;
-  box-shadow: 0 8px 25px rgba(211, 47, 47, 0.2);
+  font-size: 1.2rem;
+  box-shadow: 0 10px 30px rgba(211, 47, 47, 0.25);
 }
 
-.btn-tour:hover,
-.btn-whatsapp:hover {
+.btn-tour:hover {
   background: #b71c1c;
-  transform: translateY(-4px);
-  box-shadow: 0 16px 35px rgba(211, 47, 47, 0.3);
+  transform: translateY(-5px);
+  box-shadow: 0 18px 40px rgba(211, 47, 47, 0.35);
 }
 
 .alert {
@@ -1017,7 +1118,6 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
   z-index: 9999;
   animation: slideIn 0.4s ease;
@@ -1037,147 +1137,207 @@ onMounted(async () => {
     opacity: 0;
     transform: translateX(50px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
   }
 }
 
-.share-modal-overlay {
+.schedule-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10000;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(8px);
+  padding: 20px;
 }
 
-.share-modal {
+.schedule-modal-content {
   background: white;
-  border-radius: 20px;
-  padding: 30px;
-  width: 90%;
-  max-width: 480px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   position: relative;
-  animation: modalFade 0.3s ease;
+  animation: modalPop 0.4s cubic-bezier(0.34, 0.69, 0.36, 0.98);
 }
 
 .close-btn {
   position: absolute;
-  top: 12px;
-  right: 16px;
+  top: 16px;
+  right: 20px;
   background: none;
   border: none;
-  font-size: 1.8rem;
-  color: #999;
+  font-size: 2rem;
+  color: #aaa;
   cursor: pointer;
-}
-
-.close-btn:hover {
-  color: var(--primary-red);
-}
-
-.share-modal h3 {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--dark-charcoal);
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.share-link-container {
+  z-index: 10;
+  width: 44px;
+  height: 44px;
   display: flex;
-  gap: 10px;
-}
-
-.share-link-container input {
-  flex: 1;
-  padding: 12px 16px;
-  border: 2px solid #ddd;
-  border-radius: 12px;
-  font-size: 1rem;
-  background: #f9f9f9;
-}
-
-.copy-btn {
-  background: var(--primary-red);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  padding: 0 20px;
-  font-weight: 600;
-  white-space: nowrap;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
   transition: all 0.3s;
 }
 
-.copy-btn:hover {
-  background: #c62828;
-  transform: scale(1.05);
+.close-btn:hover {
+  background: #f0f0f0;
+  color: var(--primary-red);
 }
 
-@keyframes modalFade {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
+.modal-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--dark-charcoal);
+  text-align: center;
+  margin: 30px 50px 8px;
+  padding-top: 10px;
 }
 
-@media (max-width: 992px) {
-  .property-title {
-    font-size: 2.8rem;
+.modal-subtitle {
+  text-align: center;
+  color: var(--medium-gray);
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+  font-weight: 500;
+}
+
+.schedule-form {
+  padding: 0 40px 40px;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  flex: 1;
+  min-width: 260px;
+}
+
+.full-width {
+  flex-basis: 100%;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--dark-charcoal);
+  font-size: 1rem;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid #e0e0e0;
+  border-radius: 16px;
+  font-size: 1rem;
+  background: #fafafa;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary-red);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.1);
+}
+
+.form-actions {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.btn-submit {
+  background: var(--primary-red);
+  color: white;
+  border: none;
+  border-radius: 60px;
+  padding: 16px 50px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  box-shadow: 0 10px 30px rgba(211, 47, 47, 0.25);
+}
+
+.btn-submit:hover {
+  background: #b71c1c;
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(211, 47, 47, 0.35);
+}
+
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(20px);
   }
-  .property-price {
-    font-size: 2.3rem;
-  }
-  .carousel-image-wrapper img {
-    height: 380px;
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
 
 @media (max-width: 768px) {
-  .property-hero {
-    padding: 80px 0 60px;
+  .schedule-modal-content {
+    max-width: 95%;
+    border-radius: 20px;
+    padding-bottom: 20px;
   }
-  .property-title {
-    font-size: 2.4rem;
+
+  .modal-title {
+    font-size: 1.6rem;
+    margin: 20px 40px 6px;
   }
-  .property-price {
-    font-size: 2rem;
+
+  .schedule-form {
+    padding: 0 24px 30px;
   }
-  .carousel-image-wrapper img {
-    height: 320px;
+
+  .form-group {
+    min-width: 100%;
   }
-  .section-title {
-    font-size: 2.5rem;
-  }
-  .highlight-img {
-    height: 240px;
-  }
-  .favorite-btn, .share-btn {
-    margin-top: 12px;
-    margin-left: 0;
+
+  .btn-submit {
     width: 100%;
-    justify-content: center;
+    padding: 16px;
   }
 }
 
 @media (max-width: 576px) {
-  .property-title {
-    font-size: 2rem;
+  .modal-title {
+    font-size: 1.4rem;
   }
-  .property-price {
-    font-size: 1.8rem;
-  }
-  .carousel-image-wrapper img {
-    height: 280px;
-  }
-  .favorite-btn, .share-btn {
+
+  .modal-subtitle {
     font-size: 1rem;
-    padding: 12px 20px;
+    padding: 0 20px;
+  }
+
+  .schedule-form {
+    padding: 0 20px 30px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 14px 16px;
   }
 }
 </style>
